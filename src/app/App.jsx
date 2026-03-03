@@ -1,13 +1,18 @@
-import { useState } from 'react'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LocationPage from "../pages/Location/Location";
 
-export default function App() { 
+// Можна також додати Home, якщо він вже створений
+// import Home from "../pages/Home/Home";
+
+export default function App() {
   return (
-    <>
-      <div>
-        <h1>Waygo</h1>
-      </div>
-    </>
-  )
+    <BrowserRouter>
+      <Routes>
+        
+        <Route path="/" element={<LocationPage />} />
+        
+        <Route path="/location/:id" element={<LocationPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
-
-

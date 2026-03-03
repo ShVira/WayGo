@@ -1,0 +1,129 @@
+.location-page {
+  padding: 16px;
+  max-width: 500px;
+  margin: 0 auto;
+  font-family: 'Inter', sans-serif;
+}
+
+.location-image-container {
+  position: relative;
+  border-radius: 28px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.location-image {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+}
+
+.close-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(0, 0, 0, 0.4);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.location-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.location-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  color: #1a1a1a;
+}
+
+.location-distance {
+  color: #8e8e93;
+  margin: 4px 0 0 0;
+  font-size: 16px;
+}
+
+.rating-card {
+  border: 1px solid #efeff4;
+  padding: 8px 16px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.rating-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.rating-value {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.reviews-count {
+  font-size: 12px;
+  color: #8e8e93;
+  display: block;
+}
+
+.tags-container {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.location-description {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #48484a;
+  margin-bottom: 24px;
+}
+
+/* Стилі для блоків адреси та годин */
+.info-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #efeff4;
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.info-icon {
+  font-size: 18px;
+  padding-top: 2px;
+}
+
+.info-content {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  font-size: 15px;
+}
+
+.info-label {
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.info-value {
+  color: #48484a;
+}
