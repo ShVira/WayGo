@@ -52,12 +52,38 @@
   font-size: 16px;
 }
 
+.rating-card-link {
+  text-decoration: none;
+  transition: transform 0.2s;
+}
+
+.rating-card-link:hover {
+  transform: translateY(-2px);
+}
+
 .rating-card {
-  border: 1px solid #efeff4;
+  border: 1px solid #e8f5e9;
+  background: #f1f8e9;
   padding: 8px 16px;
   border-radius: 20px;
   text-align: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(46, 125, 50, 0.1);
+  transition: all 0.2s;
+}
+
+.rating-card-link:hover .rating-card {
+  background: #e1f5fe;
+  border-color: #b3e5fc;
+  box-shadow: 0 4px 12px rgba(2, 136, 209, 0.15);
+}
+
+.rating-card .reviews-count {
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+.rating-card-link:hover .reviews-count {
+  color: #0288d1;
 }
 
 .rating-row {
