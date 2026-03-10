@@ -1,15 +1,18 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "../pages/Home/Home";
 import LocationPage from "../pages/Location/Location";
-import Layout from "../features/layout/Layout";
+
+// Можна також додати Home, якщо він вже створений
+// import Home from "../pages/Home/Home";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<LocationPage />} />
-          <Route path="location/:id" element={<LocationPage />} />
-        </Route>
+        
+        <Route path="/" element={<LocationPage />} />
+        
+        <Route path="/location/:id" element={<LocationPage />} />
       </Routes>
     </BrowserRouter>
   );
