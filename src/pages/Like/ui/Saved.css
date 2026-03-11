@@ -1,0 +1,139 @@
+/* SavedPage.css */
+.saved-page {
+  padding: 20px;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+}
+
+.saved-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.saved-title {
+  color: #4CAF50;
+  font-size: 32px;
+  font-weight: 800;
+}
+
+.saved-card {
+  background: white;
+  border-radius: 20px;
+  padding: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  position: relative;
+}
+
+.saved-card__link {
+  display: flex;
+  text-decoration: none;
+  color: inherit;
+  flex: 1;
+}
+
+.saved-card__img {
+  width: 80px;
+  height: 80px;
+  border-radius: 15px;
+  object-fit: cover;
+  margin-right: 15px;
+}
+
+.saved-card__info h3 {
+  font-size: 18px;
+  margin: 0 0 4px 0;
+}
+
+.saved-card__info p {
+  color: #8e8e93;
+  font-size: 14px;
+}
+
+.saved-card__remove {
+  background: #f0fdf4;
+  border: 1px solid #dcfce7;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.mini-tag {
+  font-size: 10px;
+  background: #f1f8e9;
+  color: #2e7d32;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-right: 4px;
+}
+.saved-card__remove {
+  background: #f1f8e9; /* Light green tint */
+  color: #4caf50;      /* Primary green for the icon */
+  border: none;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.saved-card__remove:active {
+  transform: scale(0.9);
+  background-color: #e8f5e9;
+}
+/* src/pages/saved/SavedPage.css updates */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 50vh; /* Centers the content vertically in the available space */
+  padding: 20px;
+}
+
+.empty-state__title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.empty-state__text {
+  font-size: 16px;
+  color: #8e8e93; /* Subtle gray for mobile design */
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+/* 6. Green CTA Button from your design */
+.empty-state__btn {
+  background-color: #4CAF50; /* Native green WayGo primary color */
+  color: white;
+  border: none;
+  border-radius: 28px; /* Large, rounded mobile-first button */
+  padding: 16px 40px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+}
+
+.empty-state__btn:active {
+  background-color: #43A047; /* Subtle visual feedback on press */
+  transform: translateY(1px);
+}
