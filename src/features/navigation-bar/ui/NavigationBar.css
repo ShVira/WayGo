@@ -17,21 +17,21 @@
   padding: 8px 0;
 }
 
-.navigation-bar__btn {
+.navigation-bar__link {
   display: flex;
   flex-direction: column;
   align-items: center;
   background: none;
-  border: none;
   color: #666;
+  text-decoration: none; /* Removes underline from links */
   cursor: pointer;
   gap: 4px;
+  transition: color 0.2s ease;
 }
 
-.navigation-bar__item.active .navigation-bar__btn {
+.navigation-bar__link.active {
   color: #4caf50; /* Primary green */
 }
-
 .navigation-bar__icon {
   font-size: 20px;
 }
@@ -39,4 +39,21 @@
 .navigation-bar__label {
   font-size: 11px;
   font-weight: 500;
+}
+.nav-badge {
+  position: absolute;
+  top: -6px;
+  left:190px;
+  background-color: #ff3b30; /* Bright red notification */
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ffffff; /* Contrast border */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }

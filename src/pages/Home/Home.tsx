@@ -8,6 +8,7 @@ import { ShuffleButton } from '../../features/shuffle/ShuffleButton';
 import { MOCK_LOCATIONS } from '../../entities/location/api/MockLocations';
 import { LocationPopup } from './ui/LocationPopup';
 import './ui/Home.css';
+import { useNavigate } from 'react-router-dom';
 
 // Fix for default marker icons in Leaflet with React
 // @ts-ignore
@@ -20,6 +21,7 @@ L.Icon.Default.mergeOptions({
 
 const Home: React.FC = () => {
   const center: [number, number] = [50.4417, 30.5153]; // Centered around Squat 17b for better initial view
+  const navigate = useNavigate();
 
   return (
     <Layout>

@@ -20,7 +20,7 @@ export const MOCK_LOCATIONS: Location[] = [
     name: 'Kyiv Pechersk Lavra',
     distance: '2.1 km',
     rating: 4.8,
-    image: 'https://images.unsplash.com/photo-1555502758-7f9479a02298?q=80&w=800&auto=format&fit=crop',
+    image: 'https://hromadske.radio/_next/image?url=https%3A%2F%2Fstatic.hromadske.radio%2F2023%2F01%2Flavra.jpg&w=1366&q=75',
     vibes: ['Explore', 'Special'],
     icon: '✨',
     coords: [50.4346, 30.5574],

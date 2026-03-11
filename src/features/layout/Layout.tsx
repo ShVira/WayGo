@@ -1,3 +1,5 @@
+
+
 import React from 'react';
 import { Header } from '../header/header';
 import { NavigationBar } from '../navigation-bar/NavigationBar';
@@ -18,3 +20,4 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     </div>
   );
 };
+
