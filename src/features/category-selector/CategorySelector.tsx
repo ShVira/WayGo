@@ -12,7 +12,12 @@ const VIBES = [
   { id: 'special', label: 'Special', icon: <Sparkles size={24} color="#f57c00" /> },
 ];
 
-export const CategorySelector: React.FC = () => {
+interface CategorySelectorProps {
+  selectedVibe: string | null;
+  onVibeChange: (vibeId: string | null) => void;
+}
+
+export const CategorySelector: React.FC<CategorySelectorProps> = ({ selectedVibe, onVibeChange }) => {
   return (
     <div className="category-selector">
       <div className="category-selector__header">
@@ -20,7 +25,11 @@ export const CategorySelector: React.FC = () => {
       </div>
       <div className="category-selector__grid">
         {VIBES.map((vibe) => (
-          <button key={vibe.id} className="category-selector__item">
+          <button
+            key={vibe.id}
+            className={`category-selector__item ${selectedVibe === vibe.label ? 'category-selector__item--active' : ''}`}
+            onClick={() => onVibeChange(selectedVibe === vibe.label ? null : vibe.label)}
+          >
             <span className="category-selector__icon">{vibe.icon}</span>
             <span className="category-selector__label">{vibe.label}</span>
           </button>

@@ -36,9 +36,14 @@
   padding: 8px;
 }
 
-.category-selector__item:hover, .category-selector__item:focus {
+.category-selector__item:hover, .category-selector__item:focus, .category-selector__item--active {
   border-color: #4caf50;
   background-color: #f1f8f1;
+}
+
+.category-selector__item--active {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
 }
 
 .category-selector__icon {
