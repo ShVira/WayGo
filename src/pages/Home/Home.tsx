@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap, Circle } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -10,7 +10,8 @@ import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import { Layout } from '../../features/layout/Layout';
 import { CategorySelector } from '../../features/category-selector/CategorySelector';
 import { ShuffleButton } from '../../features/shuffle/ShuffleButton';
-import { MOCK_LOCATIONS } from '../../entities/location/api/MockLocations';
+import { MOCK_LOCATIONS, Location } from '../../entities/location/api/MockLocations';
+import { fetchNearbyLocations } from '../../entities/location/api/GooglePlacesService';
 import { LocationPopup } from './ui/LocationPopup';
 import './ui/Home.css';
 
@@ -35,10 +36,48 @@ const Home: React.FC = () => {
   const [selectedVibe, setSelectedVibe] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [locations, setLocations] = useState<Location[]>(MOCK_LOCATIONS);
   
   const [mapCenter, setMapCenter] = useState<[number, number]>([50.4417, 30.5153]);
   const [searchCenter, setSearchCenter] = useState<[number, number]>([50.4417, 30.5153]);
   const [searchRadius, setSearchRadius] = useState(1000); // meters
+
+  const loadLocations = useCallback(async (isShuffle = false) => {
+    setIsLoading(true);
+    try {
+      const allRealLocations = await fetchNearbyLocations(searchCenter, searchRadius, selectedVibe);
+      
+      let selectedSet: Location[] = [];
+      
+      if (allRealLocations.length > 0) {
+        // Pick 5 random locations from the results
+        const shuffled = [...allRealLocations].sort(() => 0.5 - Math.random());
+        selectedSet = shuffled.slice(0, 5);
+      } else {
+        // Fallback to 5 random mocks if no real ones found
+        const filteredMocks = selectedVibe 
+          ? MOCK_LOCATIONS.filter(loc => loc.vibes.includes(selectedVibe))
+          : MOCK_LOCATIONS;
+        const shuffledMocks = [...filteredMocks].sort(() => 0.5 - Math.random());
+        selectedSet = shuffledMocks.slice(0, 5);
+      }
+
+      setLocations(selectedSet);
+
+      // If it's a shuffle, fly to the first one of the new set
+      if (isShuffle && selectedSet.length > 0) {
+        setMapCenter(selectedSet[0].coords);
+      }
+    } catch (error) {
+      console.error('Error loading locations:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [searchCenter, searchRadius, selectedVibe]);
+
+  useEffect(() => {
+    loadLocations();
+  }, [loadLocations]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,6 +94,7 @@ const Home: React.FC = () => {
         const newCoords: [number, number] = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
         setSearchCenter(newCoords);
         setMapCenter(newCoords);
+        // loadLocations will be triggered by useEffect due to searchCenter change
       }
     } catch (error) {
       console.error('Geocoding error:', error);
@@ -63,9 +103,9 @@ const Home: React.FC = () => {
     }
   };
 
-  const filteredLocations = selectedVibe 
-    ? MOCK_LOCATIONS.filter(loc => loc.vibes.includes(selectedVibe))
-    : MOCK_LOCATIONS;
+  const handleShuffle = () => {
+    loadLocations(true);
+  };
 
   return (
     <Layout>
@@ -109,15 +149,15 @@ const Home: React.FC = () => {
               pathOptions={{ color: '#4caf50', weight: 2, fillOpacity: 0.1 }}
             />
 
-            {filteredLocations.map((location) => (
-              <Marker key={location.id} position={location.coords as [number, number]}>
+            {locations.map((location) => (
+              <Marker key={`${location.id}-${location.googlePlaceId || ''}`} position={location.coords as [number, number]}>
                 <Popup>
                   <LocationPopup location={location} />
                 </Popup>
               </Marker>
             ))}
           </MapContainer>
-          <ShuffleButton onClick={() => {}} />
+          <ShuffleButton onClick={handleShuffle} />
         </section>
       </div>
     </Layout>
@@ -125,3 +165,4 @@ const Home: React.FC = () => {
 };
 
 export default Home;
+

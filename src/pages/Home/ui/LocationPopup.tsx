@@ -1,6 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom'; // 1. Import useNavigate
-import { useGooglePlacePhoto } from '../../../shared/hooks/useGooglePlacePhoto';
 import { Location } from '../../../entities/location/api/MockLocations';
 import './Home.css';
 
@@ -9,7 +8,7 @@ interface LocationPopupProps {
 }
 
 export const LocationPopup: React.FC<LocationPopupProps> = ({ location }) => {
-  const photoUrl = useGooglePlacePhoto(location.googlePlaceId, location.image);
+  const photoUrl = location.image;
   const navigate = useNavigate(); // 2. Initialize navigate
 
   const handleDetailsClick = () => {
