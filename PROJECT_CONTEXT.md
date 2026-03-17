@@ -1,4 +1,4 @@
-# WayGo - Project Context & Documentation
+# WayGo - Project Context & Technical Documentation
 
 ## 1. Project Overview
 **WayGo** is an innovative personalized web application for finding leisure locations based on the user's **emotional context** (Vibe).
@@ -19,55 +19,51 @@ Locations are classified into 7 primary vibes:
 7.  **Special** (Unique events, specific atmosphere) - Icon: `Sparkles`
 
 ### Key Functionalities
-*   **Personalized Search:** Radius-based search filtered by vibes and distance (1, 5, 10, 50 km).
-*   **Interactive Map:** Real-time visualization of locations using Leaflet (Kyiv mock data implemented).
-*   **Shuffle Button:** Floating action button (FAB) on the map for instant recommendation refresh.
-*   **Social Interaction:** "I was here" marks, reviews, likes/dislikes (Mocked in NavigationBar).
-*   **AI Core:** NLP analysis of reviews to automatically assign vibes (Future implementation).
+*   **Dynamic Search:** Radius-based search using Google Places API, filtered by vibes.
+*   **Interactive Map:** Leaflet-based visualization with custom markers and a green radius circle.
+*   **Shuffle Button:** Selects 5 random locations within the search radius and focuses the map on one.
+*   **Caching & Optimization:** Session-level caching for API results and field-limiting to minimize quota usage.
+*   **Saved Locations:** Persistence via LocalStorage and React Context (`SavedContext`).
 
 ## 3. Technical Stack
 *   **Frontend:** React (SPA) + TypeScript.
 *   **Routing:** React Router DOM v7.
-*   **Maps:** Leaflet & React-Leaflet (OpenStreetMap).
+*   **Maps:** Leaflet & React-Leaflet (OpenStreetMap tiles).
+*   **External API:** Google Places API (Nearby Search & Place Details).
+*   **Geocoding:** OpenStreetMap (Nominatim) for free location searches.
 *   **Icons:** Lucide-React.
-*   **State Management:** React Context / Custom Stores.
 *   **Styling:** Vanilla CSS (Modular).
 *   **Build Tool:** Vite.
 
-## 4. Current Implementation Status (Frontend)
-### Architecture
-The project follows a feature-based structure:
-*   `src/app/`: Routing and global configuration.
-*   `src/features/`: Reusable logic/UI components:
-    *   `header/`: Centered logo, slogan ("Знайди свій вайб поруч"), and MapPin icon.
-    *   `navigation-bar/`: Footer with 4 tabs (Головна, Обране, Історія, Профіль).
-    *   `category-selector/`: Top-level Vibe grid with Lucide icons.
-    *   `shuffle/`: Floating "Shuffle" button for the map.
-    *   `layout/`: Main app wrapper (Header/Navbar/Content).
-*   `src/pages/`: Page-level components:
-    *   `Home/`: Vibe selector (top), Search Bar with distance dropdown (middle), and Map (bottom).
-    *   `Location/`: Detailed view for specific locations.
+## 4. Architecture & Implementation Details
+### Directory Structure
+*   `src/app/`: Routing and global providers (`SavedContext`).
+*   `src/entities/`: 
+    *   `location/api/`: `GooglePlacesService.ts` (Core API logic), `MockLocations.ts` (Data types and fallbacks).
+*   `src/features/`: UI modules (`category-selector`, `navigation-bar`, `shuffle`, `layout`).
+*   `src/pages/`: 
+    *   `Home/`: Map management, location fetching, and shuffle logic.
+    *   `Location/`: Dynamic detail fetching from Google Places.
+    *   `Like/`: Saved locations display.
 
-### Key Components
-1.  **Header:** Centered green logo and thin slogan. Height increased for spacious feel.
-2.  **NavigationBar:** Fixed bottom menu with Map, Bookmark, Clock, and User icons.
-3.  **Home Page:**
-    *   `CategorySelector`: Horizontal scrollable/grid of vibes.
-    *   `SearchBar`: Input with "Вкажіть місцерозташування..." placeholder and distance dropdown.
-    *   `MapContainer`: Full-width map with custom markers and popups.
-    *   `ShuffleButton`: Pulsating green FAB at the bottom center of the map.
+### Google Places Integration Strategy
+*   **Quota Management:** 
+    *   **Caching:** Results for `nearbySearch` and `getDetails` are stored in an in-memory session cache.
+    *   **Field Filtering:** `getDetails` requests only specific fields (`name`, `photos`, `geometry`, etc.) to stay in the Basic/Atmosphere billing tiers.
+    *   **Pre-fetching:** Popups use image URLs already retrieved during search to avoid redundant calls.
+*   **Vibe Mapping:** Maps Google Place types (e.g., `cafe`, `park`) to WayGo vibes using `TYPE_MAPPING` in `GooglePlacesService.ts`.
 
-## 5. Development Guide
-*   **Run Dev Server:** `npm run dev` (from `WayGo` folder).
-*   **Build:** `npm run build`.
-*   **Main Color Palette:**
-    *   Primary Green: `#4caf50` (Logo, Markers, Icons).
-    *   Deep Green: `#2e7d32` (Title, Shuffle Button).
-    *   Background: `#f9fbf9` (Ecological white).
-    *   Borders/Dividers: `#edf2ed`.
+### Location Data Structure
+*   `id`: Support for both `number` (mocks) and `string` (Google Place IDs).
+*   `coords`: Array `[latitude, longitude]`.
+*   `vibes`: Array of vibe labels (e.g., `['Cozy', 'Social']`).
 
-## 6. Recent UI Changes
-*   Swapped Vibe Selector (Top) and Search Bar (Middle).
-*   Unified icon system using `lucide-react`.
-*   Updated Header branding (centered, specific slogan, larger logo).
-*   Replaced Emoji markers with Leaflet markers + Popups containing location info.
+## 5. Development & Security
+*   **Environment Variables:** `VITE_GOOGLE_MAPS_API_KEY` is required in `.env`.
+*   **Git Safety:** `.env` is excluded via `.gitignore`.
+*   **Geocoding:** Always use Nominatim for text-to-coordinate conversion to save API credits.
+
+## 6. Recent Updates
+*   Integrated real-world location fetching with a 5-random-result constraint.
+*   Implemented "Shuffle" button logic to pick 5 new random locations from the same area.
+*   Transitioned `LocationPage` to fetch real-time data from Google when needed.
