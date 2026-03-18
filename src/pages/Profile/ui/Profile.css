@@ -1,0 +1,35 @@
+/* Profile.css */
+
+/* We use your existing .location-page styles here */
+.profile-page {
+    background-color: #ffffff;
+}
+
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+/* Custom adjustment for Profile info consistency */
+.profile-page .info-item {
+    padding: 12px 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.profile-page .info-item:last-child {
+    border-bottom: none;
+}
+
+/* Ensure the profile image looks good as a "location header" */
+.profile-page .location-image {
+    border-bottom: 4px solid #2e7d32; /* Subtle green accent at the bottom of image */
+}
+
+/* Responsive adjustment */
+@media (max-width: 480px) {
+    .location-title {
+        font-size: 24px;
+    }
+}

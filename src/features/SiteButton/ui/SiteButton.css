@@ -1,0 +1,41 @@
+.site-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  
+  /* Ecological Green Theme */
+  background-color: #2e7d32; 
+  color: #ffffff;
+  
+  /* Pill Shape & Spacing */
+  padding: 12px 28px;
+  border-radius: 30px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  
+  /* Typography */
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  
+  /* Effects */
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  outline: none;
+}
+
+.site-button:hover {
+  background-color: #388e3c;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+}
+
+.site-button:active {
+  transform: translateY(0);
+}
+
+.site-button__text {
+  white-space: nowrap;
+}
