@@ -1,5 +1,5 @@
 export interface Location {
-  id: number;
+  id: string | number;
   name: string;
   distance: string;
   rating: number;
