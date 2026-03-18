@@ -1,0 +1,116 @@
+.auth-container {
+    padding: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh; /* Increased to center better vertically */
+    background-color: #fafafa; /* Very light grey to make the white card pop */
+}
+
+.auth-card {
+    background: white;
+    padding: 40px 32px;
+    border-radius: 28px;
+    /* Soft shadow to match the location cards */
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06); 
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.auth-title {
+    font-size: 26px;
+    font-weight: 800; /* Extra bold for that WayGo feel */
+    color: #1a1a1a;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+
+.auth-subtitle {
+    color: #8e8e93;
+    font-size: 15px;
+    margin-bottom: 32px;
+    line-height: 1.4;
+}
+
+.input-group {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    color: #2e7d32; /* WayGo Green */
+    letter-spacing: 0.8px;
+    padding-left: 4px;
+}
+.upload-avatar-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #f1f8e9; /* Light green */
+    border: 2px dashed #2e7d32;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    cursor: pointer;
+    color: #2e7d32;
+    font-size: 24px;
+    transition: all 0.3s ease;
+    background-position: center;
+}
+
+.upload-avatar-circle:hover {
+    background-color: #e8f5e9;
+    transform: scale(1.05);
+}
+.input-group input {
+    width: 85%;
+    padding: 14px 18px;
+    border-radius: 16px; /* Slightly more rounded */
+    border: 2px solid #f2f2f7; /* Thicker, softer border */
+    background: #f9f9fb;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    transition: all 0.25s ease;
+    outline: none;
+}
+
+.input-group input::placeholder {
+    color: #c7c7cc;
+}
+
+.input-group input:focus {
+    border-color: #2e7d32;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.1); /* Subtle green glow */
+}
+
+.auth-actions {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.toggle-btn {
+    background: none;
+    border: none;
+    color: #2e7d32; /* Switched to green to feel like a link */
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 8px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.toggle-btn:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
