@@ -1,6 +1,7 @@
 // 1. You MUST import useContext here
+import React, { useContext } from "react"; 
+import "./ui/App.css"; // Global styles and variables
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import React, { useContext } from "react"; // Add useContext here!
 
 import Home from "../pages/Home/Home";
 import LocationPage from "../pages/Location/Location";
@@ -18,7 +19,7 @@ function AppRoutes() {
   const { user } = useContext(AppContext);
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/WayGo">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/location/:id" element={<LocationPage />} />

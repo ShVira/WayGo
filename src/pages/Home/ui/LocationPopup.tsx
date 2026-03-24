@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom'; // 1. Import useNavigate
+import { useNavigate } from 'react-router-dom';
 import { Location } from '../../../entities/location/api/MockLocations';
 import './Home.css';
 
@@ -8,37 +8,49 @@ interface LocationPopupProps {
 }
 
 export const LocationPopup: React.FC<LocationPopupProps> = ({ location }) => {
-  const photoUrl = location.image;
-  const navigate = useNavigate(); // 2. Initialize navigate
+  const navigate = useNavigate();
 
-  const handleDetailsClick = () => {
-    // 3. This matches your LocationPage route: /location/:id
+  const handleDetailsClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     navigate(`/location/${location.id}`);
   };
 
   return (
-    <div className="map-popup" onClick={handleDetailsClick} style={{ cursor: 'pointer' }}>
-      <img src={photoUrl} alt={location.name} className="map-popup__image" />
+    <div className="map-popup">
+      <img src={location.image} alt={location.name} className="map-popup__image" />
       <h3>{location.name}</h3>
       <p>
-        <a 
-          href={location.reviewUrl} 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          className="map-popup__rating"
-          title="Дивитися відгуки"
-          onClick={(e) => e.stopPropagation()} // Prevents navigation when just clicking the review link
-        >
-          ⭐ {location.rating}
-        </a> 
+        <span className="map-popup__rating">⭐ {location.rating}</span> 
         • {location.distance}
       </p>
       <div className="map-popup__vibes">
-        {location.vibes.slice(0, 2).map(vibe => ( // Slice to keep popup clean
+        {location.vibes.slice(0, 2).map(vibe => (
           <span key={vibe} className="vibe-tag">{vibe}</span>
         ))}
       </div>
-   
+      <div style={{ padding: '0 12px 12px 12px' }}>
+        <button 
+          onClick={handleDetailsClick}
+          className="btn-details"
+          style={{ 
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%', 
+            padding: '10px', 
+            borderRadius: '12px', 
+            background: 'var(--primary)', 
+            color: 'white', 
+            border: 'none',
+            fontSize: '13px',
+            fontWeight: 'bold',
+            cursor: 'pointer'
+          }}
+        >
+          Детальніше
+        </button>
+      </div>
     </div>
   );
 };

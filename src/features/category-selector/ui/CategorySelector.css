@@ -1,24 +1,25 @@
 .category-selector {
-  padding: 16px 0;
+  padding: 8px 0; /* Reduced vertical padding */
 }
 
 .category-selector__title {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 16px; /* Slightly smaller title on mobile */
+  font-weight: 700;
   margin-bottom: 12px;
-  color: #333;
+  color: var(--text-main);
+  padding-left: 4px;
 }
 
 .category-selector__grid {
   display: flex;
   overflow-x: auto;
-  gap: 12px;
-  padding-bottom: 8px;
-  scrollbar-width: none; /* Hide scrollbar Firefox */
+  gap: 10px; /* Tighter gap between items */
+  padding: 4px 4px 8px 4px;
+  scrollbar-width: none;
 }
 
 .category-selector__grid::-webkit-scrollbar {
-  display: none; /* Hide scrollbar Chrome/Safari */
+  display: none;
 }
 
 .category-selector__item {
@@ -26,33 +27,45 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 80px;
-  height: 80px;
+  min-width: 76px; /* Reduced from 88px */
+  height: 76px; /* Reduced from 88px */
   background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 16px;
+  border: none;
+  border-radius: 18px;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  padding: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.category-selector__item:hover, .category-selector__item:focus, .category-selector__item--active {
-  border-color: #4caf50;
-  background-color: #f1f8f1;
+.category-selector__item:hover {
+  background-color: var(--primary-light);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(76, 175, 80, 0.1);
+}
+
+.category-selector__item:hover .category-selector__label {
+  color: var(--primary);
 }
 
 .category-selector__item--active {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+  background-color: var(--primary-light);
+  box-shadow: 0 8px 20px rgba(76, 175, 80, 0.15);
+  transform: translateY(-4px);
+}
+
+.category-selector__item--active .category-selector__label {
+  color: var(--primary);
+  font-weight: 700;
 }
 
 .category-selector__icon {
-  font-size: 24px;
+  font-size: 22px; /* Reduced from 26px */
   margin-bottom: 4px;
 }
 
 .category-selector__label {
-  font-size: 12px;
-  font-weight: 500;
-  color: #555;
+  font-size: 11px; /* Slightly smaller label */
+  font-weight: 600;
+  color: var(--text-muted);
 }

@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Badge } from '../../features/category-tags/Badge';
 import { Layout } from '../../features/layout/Layout';
 import { MOCK_LOCATIONS, Location } from '../../entities/location/api/MockLocations';
@@ -6,9 +6,11 @@ import { fetchLocationDetails } from '../../entities/location/api/GooglePlacesSe
 import './ui/Location.css';
 import { useState, useEffect } from 'react';
 import { useSaved } from '../../app/providers/SavedContext';
+import { ChevronLeft, MapPin, Clock, Star, ExternalLink, Navigation, Share2, Bookmark } from 'lucide-react';
 
 const LocationPage = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false);
   const [location, setLocation] = useState<Location | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -18,12 +20,10 @@ const LocationPage = () => {
   useEffect(() => {
     const loadLocation = async () => {
       setIsLoading(true);
-      // Try MOCK_LOCATIONS first
       const mock = MOCK_LOCATIONS.find(loc => loc.id.toString() === id);
       if (mock) {
         setLocation(mock);
       } else if (id) {
-        // Try Google Places
         const real = await fetchLocationDetails(id);
         setLocation(real);
       }
@@ -35,8 +35,13 @@ const LocationPage = () => {
   if (isLoading) {
     return (
       <Layout>
-        <div className="location-page">
-          <p>Завантаження...</p>
+        <div className="location-page skeleton">
+          <div className="skeleton-image"></div>
+          <div className="location-content-wrapper">
+            <div className="skeleton-title"></div>
+            <div className="skeleton-text"></div>
+            <div className="skeleton-info"></div>
+          </div>
         </div>
       </Layout>
     );
@@ -53,9 +58,7 @@ const LocationPage = () => {
   }
 
   const isLiked = savedLocations?.some((l: any) => l.id === location.id) || false;
-
   const toggleExpand = () => setIsExpanded(!isExpanded);
-
   const handleLikeClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     toggleSave(location);
@@ -68,16 +71,16 @@ const LocationPage = () => {
           <div className="image-overlay" onClick={toggleExpand}>
             <div className="overlay-content">
               <button className="close-lightbox" onClick={toggleExpand}>×</button>
-              <img
-                src={location.image}
-                alt={location.name}
-                className="expanded-image"
-              />
+              <img src={location.image} alt={location.name} className="expanded-image" />
             </div>
           </div>
         )}
 
         <div className="location-image-container">
+          <button className="back-button-circle" onClick={() => navigate(-1)}>
+            <ChevronLeft size={24} />
+          </button>
+          
           <img
             src={location.image}
             alt={location.name}
@@ -85,74 +88,97 @@ const LocationPage = () => {
             onClick={toggleExpand}
             style={{ cursor: 'zoom-in' }}
           />
-          <button
-            className={`close-button bookmark-btn ${isLiked ? 'is-liked' : ''}`}
-            onClick={handleLikeClick}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill={isLiked ? "white" : "none"}
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="lucide lucide-bookmark"
-              aria-hidden="true"
+          
+          <div className="image-actions">
+            <button className="image-action-btn" onClick={() => alert('Поділитися локацією')}>
+              <Share2 size={20} />
+            </button>
+            <button
+              className={`image-action-btn bookmark-btn-alt ${isLiked ? 'is-liked' : ''}`}
+              onClick={handleLikeClick}
             >
-              <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>
-            </svg>
-          </button>
+              <Bookmark size={20} fill={isLiked ? "currentColor" : "none"} />
+            </button>
+          </div>
         </div>
 
-        <div className="location-header">
-          <div className="title-section">
-            <h1 className="location-title">{location.name}</h1>
-            <p className="location-distance">{location.distance} away</p>
-          </div>
-          <a
-            href={location.reviewUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rating-card-link"
-          >
-            <div className="rating-card">
-              <div className="rating-row">
-                <span className="star">⭐</span>
-                <span className="rating-value">{location.rating}</span>
+        <div className="location-content-wrapper">
+          <header className="location-header">
+            <div className="title-section">
+              <div className="location-vibes-mini">
+                {location.vibes.map(v => <span key={v} className="vibe-dot">{v}</span>)}
               </div>
-              <span className="reviews-count">Дивитися відгуки</span>
+              <h1 className="location-title">{location.name}</h1>
+              <div className="distance-badge">
+                <MapPin size={14} />
+                <span>{location.distance} від вас</span>
+              </div>
             </div>
-          </a>
-        </div>
+            
+            <div className="rating-card-new">
+              <div className="rating-score">
+                <Star size={18} fill="#fbc02d" color="#fbc02d" />
+                <span>{location.rating}</span>
+              </div>
+              <a href={location.reviewUrl} target="_blank" rel="noopener noreferrer" className="reviews-link">
+                Відгуки
+              </a>
+            </div>
+          </header>
 
-        <div className="tags-container">
-          {location.vibes.map((vibe) => (
-            <Badge key={vibe} icon={location.icon} label={vibe} />
-          ))}
-        </div>
+          <div className="section-divider"></div>
 
-        <p className="location-description">
-          {location.description}
-        </p>
+          <div className="description-section">
+            <h3 className="section-title">Опис</h3>
+            <p className="location-description">{location.description}</p>
+          </div>
 
-        <div className="info-blocks">
-          <div className="info-item">
-            <span className="info-icon">📍</span>
-            <div className="info-content">
-              <span className="info-label">Адреса:</span>
-              <span className="info-value">{location.address}</span>
+          <div className="info-grid">
+            <div className="info-card">
+              <div className="info-card__icon">
+                <MapPin size={20} />
+              </div>
+              <div className="info-card__content">
+                <span className="info-card__label">Адреса</span>
+                <span className="info-card__value">{location.address}</span>
+              </div>
+            </div>
+
+            <div className="info-card">
+              <div className="info-card__icon">
+                <Clock size={20} />
+              </div>
+              <div className="info-card__content">
+                <span className="info-card__label">Робочі години</span>
+                <span className={`info-card__value ${
+                  location.hours.toLowerCase().includes('open') ? 'status-open' : 
+                  location.hours.toLowerCase().includes('closed') ? 'status-closed' : ''
+                }`}>
+                  {location.hours}
+                </span>
+              </div>
             </div>
           </div>
 
-          <div className="info-item">
-            <span className="info-icon">🕒</span>
-            <div className="info-content">
-              <span className="info-label">Робочі години:</span>
-              <span className="info-value">{location.hours}</span>
-            </div>
+          <div className="location-actions">
+            <a 
+              href={location.reviewUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="btn-primary"
+            >
+              <Navigation size={20} />
+              Побудувати маршрут
+            </a>
+            <a 
+              href={location.reviewUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="btn-secondary"
+            >
+              <ExternalLink size={20} />
+              Сайт
+            </a>
           </div>
         </div>
       </div>
