@@ -1,12 +1,12 @@
 .saved-page {
-  padding: clamp(16px, 4vw, 32px) 0;
-  min-height: calc(100vh - 120px);
+  padding: clamp(16px, 4vw, 32px) clamp(16px, 5vw, 40px);
+  min-height: calc(100vh - 150px);
 }
 
 .saved-header {
   margin-bottom: clamp(24px, 5vw, 40px);
   text-align: left;
-  padding: 0 4px;
+  max-width: 800px;
 }
 
 .saved-title {
