@@ -1,11 +1,10 @@
-import React, { useContext, useState, useEffect } from "react"; 
+import React, { useContext } from "react"; 
 import "./ui/App.css"; 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Home from "../pages/Home/Home";
 import LocationPage from "../pages/Location/Location";
 import { SavedProvider } from "./providers/SavedContext"; 
-// --- 1. IMPORT THE HISTORY PROVIDER ---
 import { HistoryProvider } from "./providers/HistoryContext"; 
 import { SavedPage } from "../pages/Like/Saved";
 import Profile from "../pages/Profile/Profile";
@@ -15,26 +14,12 @@ import Auth from "../pages/Auth/Auth";
 import { AppContext, AppProvider } from "../features/app-context/AppContext";
 
 function AppRoutes() {
-  const { user, setUser } = useContext(AppContext);
-  const [isInitializing, setIsInitializing] = useState(true);
+  const { user, isBusy } = useContext(AppContext);
 
-  useEffect(() => {
-    const savedSession = localStorage.getItem("user-231");
-    if (savedSession) {
-      try {
-        const parsedUser = JSON.parse(savedSession);
-        setUser(parsedUser);
-      } catch (e) {
-        console.error("Failed to parse user session", e);
-        localStorage.removeItem("user-231");
-      }
-    }
-    setIsInitializing(false); 
-  }, [setUser]);
-
-  if (isInitializing) {
+  // Use isBusy from AppContext which tracks Firebase Auth state
+  if (isBusy) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'white' }}>
         <div className="spinner-border text-success" role="status">
           <span className="visually-hidden">Завантаження...</span>
         </div>
@@ -60,7 +45,6 @@ export default function App() {
   return (
     <AppProvider>
       <SavedProvider>
-        {/* --- 2. WRAP APP ROUTES IN HISTORY PROVIDER --- */}
         <HistoryProvider>
           <AppRoutes />
         </HistoryProvider>

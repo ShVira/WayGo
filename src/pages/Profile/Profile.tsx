@@ -1,28 +1,30 @@
 import { useContext, useState, useRef, ChangeEvent } from 'react';
 import SiteButton from '../../features/SiteButton/SiteButton';
-import './ui/Profile.css';
+import './ui/Profile.css'; 
 import { AppContext } from '../../features/app-context/AppContext';
 import { useSaved } from '../../app/providers/SavedContext';
 import { Layout } from '../../features/layout/Layout';
+import { auth } from '../../app/api/firebase';
+import { signOut, updateProfile } from 'firebase/auth';
 
 export default function Profile() {
-    const { user, setUser } = useContext(AppContext);
+    const { user } = useContext(AppContext);
     const { savedLocations } = useSaved();
     
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const defaultImageUrl = '/user.png';
+    const defaultImageUrl = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
 
     const [isEditing, setIsEditing] = useState(false);
     
     const [editName, setEditName] = useState(user?.name || "");
-    const [editEmail, setEditEmail] = useState(user?.email || "");
-    const [editDob, setEditDob] = useState(user?.dob || "");
-    const [editAddress, setEditAddress] = useState(user?.address || "");
     const [editImageUrl, setEditImageUrl] = useState(user?.imageUrl || defaultImageUrl);
 
-    const handleLogout = () => {
-        window.localStorage.removeItem("user-231");
-        setUser(null);
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+        } catch (error) {
+            console.error("Logout error:", error);
+        }
     };
 
     const triggerFileSelect = () => {
@@ -40,27 +42,25 @@ export default function Profile() {
         }
     };
 
-    const handleSave = () => {
-        if (!user) return;
-        const updatedUser = {
-            ...user,
-            name: editName,
-            email: editEmail,
-            dob: editDob,
-            address: editAddress,
-            imageUrl: editImageUrl
-        };
-        setUser(updatedUser);
-        window.localStorage.setItem("user-231", JSON.stringify(updatedUser));
-        setIsEditing(false);
+    const handleSave = async () => {
+        if (!auth.currentUser) return;
+        
+        try {
+            await updateProfile(auth.currentUser, {
+                displayName: editName,
+                photoURL: editImageUrl
+            });
+            setIsEditing(false);
+            // AppContext will automatically update via onAuthStateChanged
+        } catch (error) {
+            console.error("Error updating profile:", error);
+            alert("Помилка оновлення профілю");
+        }
     };
 
     const handleCancel = () => {
         if (user) {
             setEditName(user.name || "");
-            setEditEmail(user.email || "");
-            setEditDob(user.dob || "");
-            setEditAddress(user.address || "");
             setEditImageUrl(user.imageUrl || defaultImageUrl);
         }
         setIsEditing(false);
@@ -68,7 +68,7 @@ export default function Profile() {
 
     if (!user) return null;
 
-    const displayImage = editImageUrl || defaultImageUrl;
+    const displayImage = editImageUrl || user.imageUrl || defaultImageUrl;
 
     return (
         <Layout>
@@ -118,7 +118,7 @@ export default function Profile() {
                             ) : (
                                 <h1 className="location-title">{user.name}</h1>
                             )}
-                            <p className="location-distance">@{user.login}</p>
+                            <p className="location-distance">{user.email}</p>
                         </div>
                         
                         <div className="rating-card">
@@ -134,44 +134,40 @@ export default function Profile() {
                             <div className="info-icon"><i className="bi bi-envelope"></i></div>
                             <div className="info-content">
                                 <span className="info-label">Email</span>
-                                {isEditing ? (
-                                    <input className="edit-input" value={editEmail} onChange={(e) => setEditEmail(e.target.value)} />
-                                ) : (
-                                    <span className="info-value">{user.email || "Додати email"}</span>
-                                )}
+                                <span className="info-value">{user.email}</span>
                             </div>
                         </div>
 
-                        <div className="info-item">
-                            <div className="info-icon"><i className="bi bi-calendar-event"></i></div>
-                            <div className="info-content">
-                                <span className="info-label">Дата народження</span>
-                                {isEditing ? (
-                                    <input type="date" className="edit-input" value={editDob} onChange={(e) => setEditDob(e.target.value)} />
-                                ) : (
-                                    <span className="info-value">{user.dob || "Не вказано"}</span>
-                                )}
+                        {/* Note: address and dob are not in Firebase Auth by default. 
+                            If needed, these should be stored in Firestore 'users' collection. 
+                            For now, we display them as read-only if they exist in user object. 
+                        */}
+                        {user.dob && (
+                             <div className="info-item">
+                                <div className="info-icon"><i className="bi bi-calendar-event"></i></div>
+                                <div className="info-content">
+                                    <span className="info-label">Дата народження</span>
+                                    <span className="info-value">{user.dob}</span>
+                                </div>
                             </div>
-                        </div>
+                        )}
 
-                        <div className="info-item">
-                            <div className="info-icon"><i className="bi bi-geo-alt"></i></div>
-                            <div className="info-content">
-                                <span className="info-label">Адреса</span>
-                                {isEditing ? (
-                                    <input className="edit-input" value={editAddress} onChange={(e) => setEditAddress(e.target.value)} />
-                                ) : (
-                                    <span className="info-value">{user.address || "Додати адресу"}</span>
-                                )}
+                        {user.address && (
+                            <div className="info-item">
+                                <div className="info-icon"><i className="bi bi-geo-alt"></i></div>
+                                <div className="info-content">
+                                    <span className="info-label">Адреса</span>
+                                    <span className="info-value">{user.address}</span>
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
 
                     <div className="profile-actions">
                         {isEditing ? (
-                            <SiteButton text="Зберегти зміни" icon="bi-check-lg" onClick={handleSave} />
+                            <SiteButton text="Зберегти зміни" onClick={handleSave} />
                         ) : (
-                            <SiteButton text="Вийти з профілю" icon="bi-box-arrow-right" onClick={handleLogout} />
+                            <SiteButton text="Вийти з профілю" onClick={handleLogout} />
                         )}
                     </div>
                 </div>

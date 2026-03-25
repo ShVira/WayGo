@@ -1,22 +1,22 @@
 /* History.css */
 
 .history-page {
-    padding: 24px 20px 120px 20px;
-    max-width: 500px;
-    margin: 0 auto;
+    padding: clamp(16px, 4vw, 32px) clamp(16px, 5vw, 40px);
+    padding-bottom: 120px;
+    width: 100%;
 }
 
 .history-header {
-    margin-bottom: 32px;
+    margin-bottom: clamp(24px, 5vw, 40px);
 }
 
 .history-title {
-    font-size: 32px;
+    font-size: var(--fs-h1);
     font-weight: 850;
     font-style: italic;
     color: #1a1a1a;
     letter-spacing: -0.5px;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
 }
 
 .history-subtitle {
@@ -25,11 +25,24 @@
     font-weight: 500;
 }
 
-/* List Styling */
+/* List Styling - Responsive Grid */
 .history-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .history-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1200px) {
+    .history-list {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 .history-card {
@@ -37,19 +50,24 @@
     align-items: center;
     background: #ffffff;
     border-radius: 20px;
-    padding: 12px;
+    padding: 16px;
     gap: 16px;
-    /* Soft elevation instead of harsh borders */
     box-shadow: 0 4px 12px rgba(0,0,0,0.03);
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: var(--transition-smooth);
     border: 1px solid #f2f2f7;
 }
 
-.history-card:active {
-    transform: scale(0.97);
-    background-color: #f9f9fb;
+.history-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    border-color: var(--primary-light);
 }
+
+.history-card:active {
+    transform: scale(0.98);
+}
+
 
 .history-card-img {
     width: 60px;

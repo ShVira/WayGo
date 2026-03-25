@@ -1,33 +1,28 @@
-import React, { useState, useContext, useRef, useEffect } from 'react';
+import React, { useState, useContext, useRef } from 'react';
 import { AppContext } from '../../features/app-context/AppContext';
 import SiteButton from '../../features/SiteButton/SiteButton';
-import UserDao from '../../entities/user/api/UserDao';
 import { Layout } from '../../features/layout/Layout';
+import { auth } from '../../app/api/firebase';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import './ui/Auth.css';
 
 export default function Auth() {
     const [isLoginView, setIsLoginView] = useState(true);
-    const { setUser, setBusy } = useContext(AppContext);
+    const { setBusy } = useContext(AppContext);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const [login, setLogin] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [base64Image, setBase64Image] = useState<string>("");
 
-    useEffect(() => {
-        const savedUser = window.localStorage.getItem("user-231");
-        if (savedUser) {
-            setUser(JSON.parse(savedUser));
-        }
-    }, [setUser]);
-
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
             const reader = new FileReader();
-            reader.onloadend = () => setBase64Image(reader.result as string);
+            reader.onloadend = () => {
+                setBase64Image(reader.result as string);
+            };
             reader.readAsDataURL(file);
         }
     };
@@ -36,40 +31,25 @@ export default function Auth() {
         e.preventDefault();
         setBusy(true);
 
-        if (isLoginView) {
-            const res = await UserDao.authenticate(login, password);
-            if (res) {
-                window.localStorage.setItem("user-231", JSON.stringify(res));
-                setUser(res);
+        try {
+            if (isLoginView) {
+                // Firebase Login
+                await signInWithEmailAndPassword(auth, email, password);
             } else {
-                alert("Невірний логін або пароль");
+                // Firebase Register
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                // Update profile with name and photo
+                await updateProfile(userCredential.user, {
+                    displayName: name,
+                    photoURL: base64Image || "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                });
             }
-        } else {
-            const newUser = { 
-                name, 
-                login, 
-                email, 
-                address: "", 
-                dob: "", 
-                imageUrl: base64Image || "https://via.placeholder.com/150" 
-            };
-            
-            try {
-                // FIXED: Passing two arguments
-                const res = await UserDao.register(newUser, password);
-
-                // FIXED: Handling string vs object return type
-                if (typeof res === "string") {
-                    alert(res); 
-                } else {
-                    window.localStorage.setItem("user-231", JSON.stringify(res));
-                    setUser(res);
-                }
-            } catch (error) {
-                alert("Помилка реєстрації");
-            }
+        } catch (error: any) {
+            console.error("Auth error:", error);
+            alert(error.message || "Помилка авторизації");
+        } finally {
+            setBusy(false);
         }
-        setBusy(false);
     };
 
     return (
@@ -101,16 +81,12 @@ export default function Auth() {
                                     <label>ПІБ</label>
                                     <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Василь Васильович" required />
                                 </div>
-                                <div className="input-group">
-                                    <label>Email</label>
-                                    <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="mail@example.com" required />
-                                </div>
                             </>
                         )}
 
                         <div className="input-group">
-                            <label>Логін</label>
-                            <input type="text" value={login} onChange={e => setLogin(e.target.value)} placeholder="user123" required />
+                            <label>Email</label>
+                            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="mail@example.com" required />
                         </div>
 
                         <div className="input-group">
