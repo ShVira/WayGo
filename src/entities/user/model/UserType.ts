@@ -1,8 +1,10 @@
-export type UserType = {
+// entities/user/model/UserType.ts
+export interface UserType {
+    login: string;
     name: string;
     email: string;
-    login: string;
     imageUrl: string;
-    address: string;
-    dob: string;
-};
+    address?: string;
+    dob?: string;
+    password?: string; // Add this!
+}

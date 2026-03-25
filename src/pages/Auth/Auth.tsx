@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef } from 'react';
+import React, { useState, useContext, useRef, useEffect } from 'react';
 import { AppContext } from '../../features/app-context/AppContext';
 import SiteButton from '../../features/SiteButton/SiteButton';
 import UserDao from '../../entities/user/api/UserDao';
@@ -10,22 +10,25 @@ export default function Auth() {
     const { setUser, setBusy } = useContext(AppContext);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Form States
     const [login, setLogin] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
-    const [base64Image, setBase64Image] = useState<string>(""); // Store the image string here
+    const [base64Image, setBase64Image] = useState<string>("");
 
-    // Function to handle file selection and conversion
+    useEffect(() => {
+        const savedUser = window.localStorage.getItem("user-231");
+        if (savedUser) {
+            setUser(JSON.parse(savedUser));
+        }
+    }, [setUser]);
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
             const reader = new FileReader();
-            reader.onloadend = () => {
-                setBase64Image(reader.result as string);
-            };
-            reader.readAsDataURL(file); // Converts image to Base64
+            reader.onloadend = () => setBase64Image(reader.result as string);
+            reader.readAsDataURL(file);
         }
     };
 
@@ -42,18 +45,29 @@ export default function Auth() {
                 alert("Невірний логін або пароль");
             }
         } else {
-            const newUser = {
-                name,
-                login,
-                email,
-                address: "Odesa",
-                dob: "20/05/1998",
-                // Use the uploaded image, or a default if empty
-                imageUrl: base64Image || "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+            const newUser = { 
+                name, 
+                login, 
+                email, 
+                address: "", 
+                dob: "", 
+                imageUrl: base64Image || "https://via.placeholder.com/150" 
             };
-            const res = await UserDao.register(newUser);
-            window.localStorage.setItem("user-231", JSON.stringify(res));
-            setUser(res);
+            
+            try {
+                // FIXED: Passing two arguments
+                const res = await UserDao.register(newUser, password);
+
+                // FIXED: Handling string vs object return type
+                if (typeof res === "string") {
+                    alert(res); 
+                } else {
+                    window.localStorage.setItem("user-231", JSON.stringify(res));
+                    setUser(res);
+                }
+            } catch (error) {
+                alert("Помилка реєстрації");
+            }
         }
         setBusy(false);
     };
@@ -62,13 +76,17 @@ export default function Auth() {
         <Layout>
             <div className="auth-container">
                 <div className="auth-card">
+                    <div className="auth-logo-section">
+                        <h2 className="waygo-logo">📍 WayGo</h2>
+                        <p className="waygo-tagline">знайди свій вайб поруч</p>
+                    </div>
+
                     <h1 className="auth-title">{isLoginView ? 'Вхід' : 'Реєстрація'}</h1>
                     
                     <form onSubmit={handleAuth} className="auth-form">
                         {!isLoginView && (
                             <>
-                                {/* Profile Picture Upload UI */}
-                                <div className="text-center mb-4">
+                                <div className="avatar-upload-container">
                                     <div 
                                         className="upload-avatar-circle"
                                         onClick={() => fileInputRef.current?.click()}
@@ -76,16 +94,9 @@ export default function Auth() {
                                     >
                                         {!base64Image && <i className="bi bi-camera"></i>}
                                     </div>
-                                    <input 
-                                        type="file" 
-                                        ref={fileInputRef} 
-                                        onChange={handleFileChange} 
-                                        style={{ display: 'none' }} 
-                                        accept="image/*"
-                                    />
-                                    <p className="small text-muted mt-2">Додати фото профілю</p>
+                                    <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none' }} accept="image/*" />
+                                    <p className="upload-text">Додати фото профілю</p>
                                 </div>
-
                                 <div className="input-group">
                                     <label>ПІБ</label>
                                     <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Василь Васильович" required />
@@ -107,8 +118,11 @@ export default function Auth() {
                             <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required />
                         </div>
 
-                       <div className="auth-actions">
-                            <SiteButton text={isLoginView ? "Увійти" : "Зареєструватися"} onClick={() => {}} />
+                        <div className="auth-actions">
+                            <SiteButton 
+                                text={isLoginView ? "УВІЙТИ" : "ЗАРЕЄСТРУВАТИСЯ"} 
+                                type="submit" 
+                            />
                             <button type="button" className="toggle-btn" onClick={() => setIsLoginView(!isLoginView)}>
                                 {isLoginView ? "Немає акаунту? Реєстрація" : "Вже є акаунт? Увійти"}
                             </button>
