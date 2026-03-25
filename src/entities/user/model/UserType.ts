@@ -1,10 +1,9 @@
-// entities/user/model/UserType.ts
 export interface UserType {
-    login: string;
+    id: string;
+    login?: string;
     name: string;
     email: string;
-    imageUrl: string;
+    imageUrl?: string;
     address?: string;
     dob?: string;
-    password?: string; // Add this!
 }
