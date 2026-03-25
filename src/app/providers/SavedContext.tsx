@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { Location } from '../../entities/location/api/MockLocations';
 import { doc, setDoc, getDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '../api/firebase';
@@ -31,7 +31,7 @@ export const SavedProvider = ({ children }: { children: React.ReactNode }) => {
     return () => unsubscribe();
   }, [user]);
 
-  const toggleSave = async (location: Location) => {
+  const toggleSave = useCallback(async (location: Location) => {
     if (!user) {
       alert("Будь ласка, увійдіть, щоб зберігати місця.");
       return;
@@ -48,7 +48,7 @@ export const SavedProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error) {
       console.error("Error saving to Firestore:", error);
     }
-  };
+  }, [user, savedLocations]);
 
   return (
     <SavedContext.Provider value={{ savedLocations, toggleSave }}>
