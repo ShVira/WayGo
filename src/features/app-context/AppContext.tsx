@@ -1,5 +1,7 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { UserType } from '../../entities/user/model/UserType';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../../app/api/firebase';
 
 interface AppContextType {
     user: UserType | null;
@@ -12,18 +14,24 @@ export const AppContext = createContext<AppContextType>({} as AppContextType);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<UserType | null>(null);
-    const [isBusy, setBusy] = useState<boolean>(false);
+    const [isBusy, setBusy] = useState<boolean>(true);
 
-    // Initial Load: Check if a user is already saved in LocalStorage
     useEffect(() => {
-        const savedUser = window.localStorage.getItem("user-231");
-        if (savedUser) {
-            try {
-                setUser(JSON.parse(savedUser));
-            } catch (e) {
-                console.error("Failed to parse saved user", e);
+        const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+            if (firebaseUser) {
+                setUser({
+                    id: firebaseUser.uid,
+                    name: firebaseUser.displayName || 'Користувач',
+                    email: firebaseUser.email || '',
+                    imageUrl: firebaseUser.photoURL || undefined
+                } as UserType);
+            } else {
+                setUser(null);
             }
-        }
+            setBusy(false);
+        });
+
+        return () => unsubscribe();
     }, []);
 
     return (

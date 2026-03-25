@@ -3,6 +3,7 @@ import { Layout } from '../../features/layout/Layout';
 import { Link, useNavigate } from 'react-router-dom';
 import './ui/Saved.css';
 import { useSaved } from '../../app/providers/SavedContext';
+import SiteButton from '../../features/SiteButton/SiteButton'; // Import SiteButton
 import { Bookmark, MapPin, ChevronRight, Trash2 } from 'lucide-react';
 
 export const SavedPage = () => {
@@ -13,8 +14,8 @@ export const SavedPage = () => {
     <Layout>
       <div className="saved-page">
         <header className="saved-header">
-          <h1 className="saved-title">Обрані місця</h1>
-          <p className="saved-subtitle">{savedLocations.length} збережених локацій</p>
+          <h1 className="saved-title">Збережене</h1>
+          <p className="saved-subtitle">{savedLocations.length} локацій у вашому списку</p>
         </header>
        
         <div className="saved-list">
@@ -37,7 +38,7 @@ export const SavedPage = () => {
                     </div>
                     
                     <div className="saved-card__tags">
-                       {loc.vibes.slice(0, 3).map((v: string) => (
+                       {loc.vibes?.slice(0, 2).map((v: string) => (
                          <span key={v} className="mini-tag">{v}</span>
                        ))}
                     </div>
@@ -49,6 +50,7 @@ export const SavedPage = () => {
                   </div>
                 </Link>
                 
+                {/* Remove button remains a simple icon to not clutter the card */}
                 <button 
                   className="saved-card__remove-btn" 
                   onClick={() => toggleSave(loc)}
@@ -61,20 +63,21 @@ export const SavedPage = () => {
           ) : (
             <div className="empty-state">
               <div className="empty-state__icon">
-                <Bookmark size={48} />
+                <Bookmark size={40} strokeWidth={1.5} />
               </div>
-              <h2 className="empty-state__title">
-                Тут поки порожньо
-              </h2>
+              <h2 className="empty-state__title">Список порожній</h2>
               <p className="empty-state__text">
                 Зберігайте місця, які вам сподобалися, щоб вони завжди були під рукою.
               </p>
-              <button 
-                className="empty-state__btn" 
-                onClick={() => navigate('/')}
-              >
-                Знайти цікаві місця
-              </button>
+              
+              {/* Use SiteButton for the main CTA */}
+              <div style={{ marginTop: '24px' }}>
+                <SiteButton 
+                  text="Знайти цікаві місця" 
+                  icon="bi-search" 
+                  onClick={() => navigate('/')} 
+                />
+              </div>
             </div>
           )}
         </div>

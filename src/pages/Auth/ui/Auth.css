@@ -1,40 +1,53 @@
+
+
 .auth-container {
     padding: 24px;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 80vh; /* Increased to center better vertically */
-    background-color: #fafafa; /* Very light grey to make the white card pop */
+    min-height: 85vh;
+    background-color: #f8f9fa;
 }
 
 .auth-card {
     background: white;
-    padding: 40px 32px;
-    border-radius: 28px;
-    /* Soft shadow to match the location cards */
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06); 
+    padding: 40px 30px;
+    border-radius: 32px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
     width: 100%;
-    max-width: 420px;
+    max-width: 400px;
     text-align: center;
-    transition: transform 0.3s ease;
+}
+
+/* Branding */
+.auth-logo-section {
+    margin-bottom: 24px;
+}
+
+.waygo-logo {
+    color: #4CAF50;
+    font-size: 26px;
+    font-weight: 800;
+    margin: 0;
+}
+
+.waygo-tagline {
+    font-size: 13px;
+    color: #8e8e93;
+    font-style: italic;
 }
 
 .auth-title {
-    font-size: 26px;
-    font-weight: 800; /* Extra bold for that WayGo feel */
+    font-size: 24px;
+    font-weight: 800;
+    font-style: italic;
     color: #1a1a1a;
-    margin-bottom: 8px;
-    letter-spacing: -0.5px;
-}
-
-.auth-subtitle {
-    color: #8e8e93;
-    font-size: 15px;
     margin-bottom: 32px;
-    line-height: 1.4;
 }
 
+/* Inputs */
 .input-group {
+    width: 100%;
     text-align: left;
     margin-bottom: 20px;
 }
@@ -45,53 +58,61 @@
     font-weight: 800;
     text-transform: uppercase;
     margin-bottom: 8px;
-    color: #2e7d32; /* WayGo Green */
+    color: #2e7d32;
     letter-spacing: 0.8px;
     padding-left: 4px;
 }
+
+.input-group input {
+    width: 100%;
+    box-sizing: border-box; /* Fixes the width issue */
+    padding: 14px 18px;
+    border-radius: 16px;
+    border: 1px solid #efeff4;
+    background: #f2f2f7;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.input-group input:focus {
+    background: white;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 4px rgba(74, 175, 80, 0.1);
+}
+
+/* Avatar Section */
+.avatar-upload-container {
+    margin-bottom: 24px;
+}
+
 .upload-avatar-circle {
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    background-color: #f1f8e9; /* Light green */
-    border: 2px dashed #2e7d32;
+    background-color: #f2f2f7;
+    border: 2px dashed #cecece;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto;
     cursor: pointer;
-    color: #2e7d32;
-    font-size: 24px;
-    transition: all 0.3s ease;
-    background-position: center;
+    color: #8e8e93;
+    transition: all 0.2s ease;
 }
 
 .upload-avatar-circle:hover {
-    background-color: #e8f5e9;
-    transform: scale(1.05);
-}
-.input-group input {
-    width: 85%;
-    padding: 14px 18px;
-    border-radius: 16px; /* Slightly more rounded */
-    border: 2px solid #f2f2f7; /* Thicker, softer border */
-    background: #f9f9fb;
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    transition: all 0.25s ease;
-    outline: none;
+    border-color: #4CAF50;
+    color: #4CAF50;
 }
 
-.input-group input::placeholder {
-    color: #c7c7cc;
+.upload-text {
+    font-size: 12px;
+    color: #8e8e93;
+    margin-top: 8px;
 }
 
-.input-group input:focus {
-    border-color: #2e7d32;
-    background: white;
-    box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.1); /* Subtle green glow */
-}
-
+/* Actions */
 .auth-actions {
     margin-top: 32px;
     display: flex;
@@ -102,15 +123,13 @@
 .toggle-btn {
     background: none;
     border: none;
-    color: #2e7d32; /* Switched to green to feel like a link */
+    color: #2e7d32;
     font-size: 14px;
     font-weight: 600;
-    margin-top: 8px;
     cursor: pointer;
     transition: opacity 0.2s;
 }
 
 .toggle-btn:hover {
-    opacity: 0.8;
     text-decoration: underline;
 }

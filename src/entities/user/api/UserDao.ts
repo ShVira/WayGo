@@ -9,43 +9,49 @@ export default class UserDao {
         return data ? JSON.parse(data) : [];
     }
 
-    // 2. Login Logic: Check against "Admin" OR registered users
-    static authenticate(login: string, password: string): Promise<UserType | null> {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                const users = this.getAllUsers();
-                
-                // Check if user exists in our "database"
-                // (Note: In this simple mock, we assume password is login + '123' or just '123')
-                const foundUser = users.find(u => u.login === login);
+  static authenticate(login: string, password: string): Promise<UserType | null> {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            const users = this.getAllUsers();
+            
+            // Look for a user where BOTH login and password match
+            const foundUser = users.find(u => u.login === login && u.password === password);
 
-                if (login === "user" && password === "123") {
-                    resolve({
-                        name: "Admin",
-                        email: "user@i.ua",
-                        address: "Odesa",
-                        login: "user",
-                        dob: "08/12/2025",
-                        imageUrl: "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                    });
-                } else if (foundUser && password === "123") { // Standard mock password
-                    resolve(foundUser);
-                } else {
-                    resolve(null);
-                }
-            }, 700);
-        });
+            if (foundUser) {
+                resolve(foundUser);
+            } else if (login === "user" && password === "123") {
+                // Keep your admin backdoor
+                resolve({
+                    name: "Admin",
+                    login: "user",
+                    email: "admin@test.com",
+                    address: "Odesa",
+                    dob: "01/01/2000",
+                    imageUrl: "..."
+                });
+            } else {
+                resolve(null);
+            }
+        }, 700);
+    });
     }
+static register(userData: UserType, password: string): Promise<UserType | string> {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            const users = this.getAllUsers();
+            
+            if (users.find(u => u.login === userData.login)) {
+                return resolve("Цей логін вже зайнятий"); 
+            }
 
-    // 3. Register Logic: Save to the list
-    static register(userData: UserType): Promise<UserType> {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                const users = this.getAllUsers();
-                users.push(userData);
-                localStorage.setItem(USERS_KEY, JSON.stringify(users));
-                resolve(userData);
-            }, 1000);
-        });
-    }
+            // IMPORTANT: Attach the password to the user object before saving
+            const newUser = { ...userData, password }; 
+            
+            users.push(newUser);
+            localStorage.setItem(USERS_KEY, JSON.stringify(users));
+            resolve(newUser);
+        }, 1000);
+    });
+}
+    
 }

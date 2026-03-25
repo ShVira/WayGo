@@ -1,0 +1,175 @@
+/* History.css */
+
+.history-page {
+    padding: clamp(16px, 4vw, 32px) clamp(16px, 5vw, 40px);
+    padding-bottom: 120px;
+    width: 100%;
+}
+
+.history-header {
+    margin-bottom: clamp(24px, 5vw, 40px);
+}
+
+.history-title {
+    font-size: var(--fs-h1);
+    font-weight: 850;
+    font-style: italic;
+    color: #1a1a1a;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+}
+
+.history-subtitle {
+    color: #8e8e93;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+/* List Styling - Responsive Grid */
+.history-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .history-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1200px) {
+    .history-list {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.history-card {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 16px;
+    gap: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    border: 1px solid #f2f2f7;
+}
+
+.history-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    border-color: var(--primary-light);
+}
+
+.history-card:active {
+    transform: scale(0.98);
+}
+
+
+.history-card-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 14px; /* Matching the Profile squircle style */
+    object-fit: cover;
+}
+
+.history-card-info {
+    flex: 1;
+}
+
+.history-card-info h3 {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0 0 2px 0;
+    color: #1c1c1e;
+}
+
+.history-card-info p {
+    font-size: 13px;
+    color: #8e8e93;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 400;
+}
+
+.history-chevron {
+    color: #c7c7cc;
+}
+
+/* Actions */
+.clear-history-container {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+}
+
+.clear-history-link {
+    background: #f2f2f7;
+    border: none;
+    color: #1c1c1e; /* Switched from Red to match neutral theme */
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.clear-history-link:active {
+    background: #e5e5ea;
+    color: #ff3b30; /* Only turns red on active/press */
+}
+
+/* Empty State */
+.empty-history {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 80px;
+    text-align: center;
+}
+
+.empty-icon-circle {
+    width: 80px;
+    height: 80px;
+    background: #f2f2f7;
+    border-radius: 28px; /* Squircle icon container */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2e7d32; /* Using WayGo Green */
+    margin-bottom: 24px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.empty-history h3 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+}
+
+.empty-history p {
+    color: #8e8e93;
+    font-size: 15px;
+    max-width: 220px;
+    line-height: 1.4;
+}
+/* Add this to History.css if not already there */
+
+.action-footer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Ensure the empty state button is centered */
+.empty-history .site-button {
+    margin: 0 auto;
+}

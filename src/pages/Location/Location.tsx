@@ -1,37 +1,69 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { Badge } from '../../features/category-tags/Badge';
 import { Layout } from '../../features/layout/Layout';
 import { MOCK_LOCATIONS, Location } from '../../entities/location/api/MockLocations';
 import { fetchLocationDetails } from '../../entities/location/api/GooglePlacesService';
 import './ui/Location.css';
 import { useState, useEffect } from 'react';
 import { useSaved } from '../../app/providers/SavedContext';
-import { ChevronLeft, MapPin, Clock, Star, ExternalLink, Navigation, Share2, Bookmark } from 'lucide-react';
+import { useHistory } from '../../app/providers/HistoryContext'; // Import the history hook
+import { 
+  ChevronLeft, 
+  MapPin, 
+  Clock, 
+  Star, 
+  ExternalLink, 
+  Navigation, 
+  Share2, 
+  Bookmark 
+} from 'lucide-react';
 
 const LocationPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  
+  // State
   const [isExpanded, setIsExpanded] = useState(false);
   const [location, setLocation] = useState<Location | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   
+  // Contexts
   const { savedLocations, toggleSave } = useSaved();
+  const { addToHistory } = useHistory();
 
   useEffect(() => {
     const loadLocation = async () => {
       setIsLoading(true);
+      let foundLocation: Location | null = null;
+
+      // 1. Try to find in Mock Data
       const mock = MOCK_LOCATIONS.find(loc => loc.id.toString() === id);
+      
       if (mock) {
-        setLocation(mock);
+        foundLocation = mock;
       } else if (id) {
-        const real = await fetchLocationDetails(id);
-        setLocation(real);
+        // 2. Otherwise fetch from Google Places API
+        foundLocation = await fetchLocationDetails(id);
       }
+
+      if (foundLocation) {
+        setLocation(foundLocation);
+        
+        // 3. Track in viewing history
+        addToHistory({
+          id: foundLocation.id,
+          name: foundLocation.name,
+          imageUrl: foundLocation.image,
+          address: foundLocation.address
+        });
+      }
+      
       setIsLoading(false);
     };
-    loadLocation();
-  }, [id]);
 
+    loadLocation();
+  }, [id, addToHistory]);
+
+  // Loading State UI
   if (isLoading) {
     return (
       <Layout>
@@ -47,18 +79,22 @@ const LocationPage = () => {
     );
   }
 
+  // Error State UI
   if (!location) {
     return (
       <Layout>
         <div className="location-page">
           <p>Локацію не знайдено.</p>
+          <button className="btn-secondary mt-3" onClick={() => navigate(-1)}>Повернутися</button>
         </div>
       </Layout>
     );
   }
 
+  // Helpers
   const isLiked = savedLocations?.some((l: any) => l.id === location.id) || false;
   const toggleExpand = () => setIsExpanded(!isExpanded);
+  
   const handleLikeClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     toggleSave(location);
@@ -67,6 +103,7 @@ const LocationPage = () => {
   return (
     <Layout>
       <div className="location-page">
+        {/* Lightbox Overlay */}
         {isExpanded && (
           <div className="image-overlay" onClick={toggleExpand}>
             <div className="overlay-content">
@@ -76,6 +113,7 @@ const LocationPage = () => {
           </div>
         )}
 
+        {/* Hero Image Section */}
         <div className="location-image-container">
           <button className="back-button-circle" onClick={() => navigate(-1)}>
             <ChevronLeft size={24} />
@@ -102,11 +140,14 @@ const LocationPage = () => {
           </div>
         </div>
 
+        {/* Content Section */}
         <div className="location-content-wrapper">
           <header className="location-header">
             <div className="title-section">
               <div className="location-vibes-mini">
-                {location.vibes.map(v => <span key={v} className="vibe-dot">{v}</span>)}
+                {location.vibes.map(v => (
+                  <span key={v} className="vibe-dot">{v}</span>
+                ))}
               </div>
               <h1 className="location-title">{location.name}</h1>
               <div className="distance-badge">
@@ -133,6 +174,7 @@ const LocationPage = () => {
             <p className="location-description">{location.description}</p>
           </div>
 
+          {/* Info Grid */}
           <div className="info-grid">
             <div className="info-card">
               <div className="info-card__icon">
@@ -160,9 +202,10 @@ const LocationPage = () => {
             </div>
           </div>
 
+          {/* Action Buttons */}
           <div className="location-actions">
             <a 
-              href={location.reviewUrl} 
+              href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(location.address)}&destination_place_id=${location.googlePlaceId || ''}`} 
               target="_blank" 
               rel="noopener noreferrer"
               className="btn-primary"

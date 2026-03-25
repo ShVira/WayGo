@@ -1,8 +1,9 @@
-export type UserType = {
+export interface UserType {
+    id: string;
+    login?: string;
     name: string;
     email: string;
-    login: string;
-    imageUrl: string;
-    address: string;
-    dob: string;
-};
+    imageUrl?: string;
+    address?: string;
+    dob?: string;
+}
