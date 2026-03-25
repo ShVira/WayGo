@@ -1,22 +1,24 @@
 /* Saved.css */
 
 .saved-page {
-    padding: 24px 20px 120px 20px;
-    max-width: 500px;
-    margin: 0 auto;
+    padding: clamp(16px, 4vw, 32px) clamp(16px, 5vw, 40px);
+    padding-bottom: 120px;
+    width: 100%;
+    margin: 0;
 }
 
 .saved-header {
-    margin-bottom: 32px;
+    margin-bottom: clamp(24px, 5vw, 40px);
+    text-align: left;
 }
 
 .saved-title {
-    font-size: 32px;
+    font-size: var(--fs-h1);
     font-weight: 850;
     font-style: italic;
     color: #1a1a1a;
     letter-spacing: -0.5px;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
 }
 
 .saved-subtitle {
@@ -25,21 +27,52 @@
     font-weight: 500;
 }
 
+/* --- Responsive Grid --- */
+.saved-list {
+    display: grid;
+    grid-template-columns: 1fr; /* Mobile: 1 column */
+    gap: 20px;
+    width: 100%;
+}
+
+@media (min-width: 640px) {
+    .saved-list {
+        grid-template-columns: repeat(2, 1fr); /* Tablet: 2 columns */
+    }
+}
+
+@media (min-width: 1024px) {
+    .saved-list {
+        grid-template-columns: repeat(3, 1fr); /* Desktop: 3 columns */
+        gap: 24px;
+    }
+}
+
+@media (min-width: 1440px) {
+    .saved-list {
+        grid-template-columns: repeat(4, 1fr); /* Large Screen: 4 columns */
+    }
+}
+
 /* Card Styling */
 .saved-card {
     position: relative;
     background: #ffffff;
     border-radius: 24px;
-    margin-bottom: 16px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.04);
     border: 1px solid #f2f2f7;
     overflow: hidden;
-    transition: transform 0.2s ease;
+    transition: var(--transition-smooth);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
-.saved-card:active {
-    transform: scale(0.98);
+.saved-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
 }
+
 
 .saved-card__link {
     text-decoration: none;
