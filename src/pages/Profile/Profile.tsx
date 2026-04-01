@@ -4,9 +4,9 @@ import './ui/Profile.css';
 import { AppContext } from '../../features/app-context/AppContext';
 import { useSaved } from '../../app/providers/SavedContext';
 import { Layout } from '../../features/layout/Layout';
-import { auth } from '../../app/api/firebase';
+import { auth, storage, ref, uploadBytes, getDownloadURL } from '../../app/api/firebase';
 import { signOut, updateProfile } from 'firebase/auth';
-import { Pencil, X, Camera, Mail, Calendar, MapPin } from 'lucide-react';
+import { Pencil, X, Camera, Mail, Calendar, MapPin, Loader2 } from 'lucide-react';
 
 export default function Profile() {
     const { user } = useContext(AppContext);
@@ -16,15 +16,18 @@ export default function Profile() {
     const defaultImageUrl = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
 
     const [isEditing, setIsEditing] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
     
     const [editName, setEditName] = useState(user?.name || "");
     const [editImageUrl, setEditImageUrl] = useState(user?.imageUrl || defaultImageUrl);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
     // Update local state when user object changes (e.g. after Firebase update)
     useEffect(() => {
         if (user) {
             setEditName(user.name || "");
             setEditImageUrl(user.imageUrl || defaultImageUrl);
+            setSelectedFile(null);
         }
     }, [user, defaultImageUrl]);
 
@@ -43,6 +46,7 @@ export default function Profile() {
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            setSelectedFile(file);
             const reader = new FileReader();
             reader.onloadend = () => {
                 setEditImageUrl(reader.result as string);
@@ -54,16 +58,28 @@ export default function Profile() {
     const handleSave = async () => {
         if (!auth.currentUser) return;
         
+        setIsSaving(true);
         try {
+            let photoURL = user?.imageUrl || null;
+
+            if (selectedFile) {
+                const storageRef = ref(storage, `profiles/${auth.currentUser.uid}`);
+                const snapshot = await uploadBytes(storageRef, selectedFile);
+                photoURL = await getDownloadURL(snapshot.ref);
+            }
+
             await updateProfile(auth.currentUser, {
                 displayName: editName,
-                photoURL: editImageUrl
+                photoURL: photoURL
             });
+            
             setIsEditing(false);
-            // AppContext will automatically update via onAuthStateChanged
+            setSelectedFile(null);
         } catch (error) {
             console.error("Error updating profile:", error);
-            alert("Помилка оновлення профілю");
+            alert("Помилка оновлення профілю. Перевірте підключення або спробуйте інше фото.");
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -71,6 +87,7 @@ export default function Profile() {
         if (user) {
             setEditName(user.name || "");
             setEditImageUrl(user.imageUrl || defaultImageUrl);
+            setSelectedFile(null);
         }
         setIsEditing(false);
     };
@@ -109,7 +126,8 @@ export default function Profile() {
 
                     <button 
                         className={`bookmark-btn profile-action-btn ${isEditing ? 'active-cancel' : ''}`} 
-                        onClick={isEditing ? handleCancel : () => setIsEditing(true)}>
+                        onClick={isEditing ? handleCancel : () => setIsEditing(true)}
+                        disabled={isSaving}>
                        {isEditing ? <X size={20} /> : <Pencil size={20} />}
                     </button>
                 </div>
@@ -124,6 +142,7 @@ export default function Profile() {
                                     value={editName} 
                                     onChange={(e) => setEditName(e.target.value)} 
                                     autoFocus
+                                    disabled={isSaving}
                                 />
                             ) : (
                                 <h1 className="location-title">{user.name}</h1>
@@ -148,10 +167,6 @@ export default function Profile() {
                             </div>
                         </div>
 
-                        {/* Note: address and dob are not in Firebase Auth by default. 
-                            If needed, these should be stored in Firestore 'users' collection. 
-                            For now, we display them as read-only if they exist in user object. 
-                        */}
                         {user.dob && (
                              <div className="info-item">
                                 <div className="info-icon"><Calendar size={20} /></div>
@@ -175,7 +190,12 @@ export default function Profile() {
 
                     <div className="profile-actions">
                         {isEditing ? (
-                            <SiteButton text="Зберегти зміни" onClick={handleSave} />
+                            <SiteButton 
+                                text={isSaving ? "Зберігаємо..." : "Зберегти зміни"} 
+                                onClick={handleSave}
+                                icon={isSaving ? "spinner" : undefined}
+                                disabled={isSaving}
+                            />
                         ) : (
                             <SiteButton text="Вийти з профілю" onClick={handleLogout} />
                         )}
@@ -185,3 +205,4 @@ export default function Profile() {
         </Layout>
     );
 }
+
