@@ -46,3 +46,20 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
+.shuffle-button--disabled {
+  background-color: #8e8e93; /* Gray out */
+  cursor: not-allowed;
+  opacity: 0.7;
+  box-shadow: none;
+}
+
+.shuffle-button--disabled:hover {
+  background-color: #8e8e93;
+  transform: translateX(-50%);
+  box-shadow: none;
+}
+
+.shuffle-button--disabled .shuffle-button__icon {
+  animation: none;
+}

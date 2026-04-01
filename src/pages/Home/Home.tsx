@@ -334,7 +334,17 @@ const Home: React.FC = () => {
             <Navigation size={20} fill="currentColor" />
           </button>
           
-          <ShuffleButton onClick={() => loadLocations(true)} />
+          <div className="shuffle-container">
+            {!isMapInUkraine && (
+              <div className="shuffle-disabled-info">
+                Shuffle доступний тільки в Україні
+              </div>
+            )}
+            <ShuffleButton 
+              onClick={() => loadLocations(true)} 
+              disabled={!isMapInUkraine}
+            />
+          </div>
         </section>
       </div>
     </Layout>
