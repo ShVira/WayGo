@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import SiteButton from '../../features/SiteButton/SiteButton';
 import { Layout } from '../../features/layout/Layout';
 import { auth } from '../../app/api/firebase';
@@ -7,27 +7,14 @@ import './ui/Auth.css';
 
 export default function Auth() {
     const [isLoginView, setIsLoginView] = useState(true);
-    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
-    const [base64Image, setBase64Image] = useState<string>("");
     
     // Local states for better UX
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setBase64Image(reader.result as string);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
 
     const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -41,10 +28,9 @@ export default function Auth() {
             } else {
                 // Firebase Register
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                // Update profile with name and photo
+                // Update profile with name only
                 await updateProfile(userCredential.user, {
-                    displayName: name,
-                    photoURL: base64Image || "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                    displayName: name
                 });
             }
         } catch (error: any) {
@@ -81,23 +67,10 @@ export default function Auth() {
 
                     <form onSubmit={handleAuth} className="auth-form">
                         {!isLoginView && (
-                            <>
-                                <div className="avatar-upload-container">
-                                    <div 
-                                        className="upload-avatar-circle"
-                                        onClick={() => fileInputRef.current?.click()}
-                                        style={{ backgroundImage: `url(${base64Image})`, backgroundSize: 'cover' }}
-                                    >
-                                        {!base64Image && <i className="bi bi-camera"></i>}
-                                    </div>
-                                    <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none' }} accept="image/*" />
-                                    <p className="upload-text">Додати фото профілю</p>
-                                </div>
-                                <div className="input-group">
-                                    <label>ПІБ</label>
-                                    <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Василь Васильович" required />
-                                </div>
-                            </>
+                            <div className="input-group">
+                                <label>ПІБ</label>
+                                <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Василь Васильович" required />
+                            </div>
                         )}
 
                         <div className="input-group">
@@ -115,6 +88,7 @@ export default function Auth() {
                                 text={isLoading ? "ЗАВАНТАЖЕННЯ..." : (isLoginView ? "УВІЙТИ" : "ЗАРЕЄСТРУВАТИСЯ")} 
                                 type="submit" 
                                 disabled={isLoading}
+                                icon={isLoading ? "spinner" : undefined}
                             />
                             <button 
                                 type="button" 

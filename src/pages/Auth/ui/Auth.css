@@ -101,37 +101,6 @@
     box-shadow: 0 0 0 4px rgba(74, 175, 80, 0.1);
 }
 
-/* Avatar Section */
-.avatar-upload-container {
-    margin-bottom: 24px;
-}
-
-.upload-avatar-circle {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background-color: #f2f2f7;
-    border: 2px dashed #cecece;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-    cursor: pointer;
-    color: #8e8e93;
-    transition: all 0.2s ease;
-}
-
-.upload-avatar-circle:hover {
-    border-color: #4CAF50;
-    color: #4CAF50;
-}
-
-.upload-text {
-    font-size: 12px;
-    color: #8e8e93;
-    margin-top: 8px;
-}
-
 /* Actions */
 .auth-actions {
     margin-top: 32px;
