@@ -5,7 +5,7 @@ import { fetchLocationDetails } from '../../entities/location/api/GooglePlacesSe
 import './ui/Location.css';
 import { useState, useEffect } from 'react';
 import { useSaved } from '../../app/providers/SavedContext';
-import { useHistory } from '../../app/providers/HistoryContext'; // Import the history hook
+import { useHistory } from '../../app/providers/HistoryContext'; 
 import { 
   ChevronLeft, 
   MapPin, 
@@ -21,12 +21,10 @@ const LocationPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   
-  // State
   const [isExpanded, setIsExpanded] = useState(false);
   const [location, setLocation] = useState<Location | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   
-  // Contexts
   const { savedLocations, toggleSave } = useSaved();
   const { addToHistory } = useHistory();
 
@@ -35,20 +33,17 @@ const LocationPage = () => {
       setIsLoading(true);
       let foundLocation: Location | null = null;
 
-      // 1. Try to find in Mock Data
       const mock = MOCK_LOCATIONS.find(loc => loc.id.toString() === id);
       
       if (mock) {
         foundLocation = mock;
       } else if (id) {
-        // 2. Otherwise fetch from Google Places API
         foundLocation = await fetchLocationDetails(id);
       }
 
       if (foundLocation) {
         setLocation(foundLocation);
         
-        // 3. Track in viewing history
         addToHistory({
           id: foundLocation.id,
           name: foundLocation.name,
@@ -63,7 +58,6 @@ const LocationPage = () => {
     loadLocation();
   }, [id, addToHistory]);
 
-  // Loading State UI
   if (isLoading) {
     return (
       <Layout>
@@ -79,7 +73,6 @@ const LocationPage = () => {
     );
   }
 
-  // Error State UI
   if (!location) {
     return (
       <Layout>
@@ -91,7 +84,6 @@ const LocationPage = () => {
     );
   }
 
-  // Helpers
   const isLiked = savedLocations?.some((l: any) => l.id === location.id) || false;
   const toggleExpand = () => setIsExpanded(!isExpanded);
   
@@ -103,7 +95,6 @@ const LocationPage = () => {
   return (
     <Layout>
       <div className="location-page">
-        {/* Lightbox Overlay */}
         {isExpanded && (
           <div className="image-overlay" onClick={toggleExpand}>
             <div className="overlay-content">
@@ -113,7 +104,6 @@ const LocationPage = () => {
           </div>
         )}
 
-        {/* Hero Image Section */}
         <div className="location-image-container">
           <button className="back-button-circle" onClick={() => navigate(-1)}>
             <ChevronLeft size={24} />
@@ -140,7 +130,6 @@ const LocationPage = () => {
           </div>
         </div>
 
-        {/* Content Section */}
         <div className="location-content-wrapper">
           <header className="location-header">
             <div className="title-section">
@@ -174,7 +163,6 @@ const LocationPage = () => {
             <p className="location-description">{location.description}</p>
           </div>
 
-          {/* Info Grid */}
           <div className="info-grid">
             <div className="info-card">
               <div className="info-card__icon">
@@ -202,7 +190,6 @@ const LocationPage = () => {
             </div>
           </div>
 
-          {/* Action Buttons */}
           <div className="location-actions">
             <a 
               href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(location.address)}&destination_place_id=${location.googlePlaceId || ''}`} 

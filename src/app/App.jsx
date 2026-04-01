@@ -16,7 +16,6 @@ import { AppContext, AppProvider } from "../features/app-context/AppContext";
 function AppRoutes() {
   const { user, isBusy } = useContext(AppContext);
 
-  // Use isBusy from AppContext which tracks Firebase Auth state
   if (isBusy) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'white' }}>
@@ -28,27 +27,27 @@ function AppRoutes() {
   }
 
   return (
-    <BrowserRouter basename="/WayGo">
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/location/:id" element={<LocationPage />} />
-        <Route path="/saved" element={<SavedPage />} />
-        <Route path="/history" element={<History />} />
-        <Route path="/profile" element={user ? <Profile /> : <Auth />} />
-        <Route path="/auth" element={user ? <Profile /> : <Auth />} />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/location/:id" element={<LocationPage />} />
+      <Route path="/saved" element={<SavedPage />} />
+      <Route path="/history" element={<History />} />
+      <Route path="/profile" element={user ? <Profile /> : <Auth />} />
+      <Route path="/auth" element={user ? <Profile /> : <Auth />} />
+    </Routes>
   );
 }
 
 export default function App() {
   return (
     <AppProvider>
-      <SavedProvider>
-        <HistoryProvider>
-          <AppRoutes />
-        </HistoryProvider>
-      </SavedProvider>
+      <BrowserRouter basename="/WayGo">
+        <SavedProvider>
+          <HistoryProvider>
+            <AppRoutes />
+          </HistoryProvider>
+        </SavedProvider>
+      </BrowserRouter>
     </AppProvider>
   );
 }

@@ -1,5 +1,4 @@
-import React, { useState, useContext, useRef } from 'react';
-import { AppContext } from '../../features/app-context/AppContext';
+import React, { useState, useRef } from 'react';
 import SiteButton from '../../features/SiteButton/SiteButton';
 import { Layout } from '../../features/layout/Layout';
 import { auth } from '../../app/api/firebase';
@@ -8,13 +7,16 @@ import './ui/Auth.css';
 
 export default function Auth() {
     const [isLoginView, setIsLoginView] = useState(true);
-    const { setBusy } = useContext(AppContext);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [base64Image, setBase64Image] = useState<string>("");
+    
+    // Local states for better UX
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -29,7 +31,8 @@ export default function Auth() {
 
     const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault();
-        setBusy(true);
+        setIsLoading(true);
+        setError(null);
 
         try {
             if (isLoginView) {
@@ -46,9 +49,20 @@ export default function Auth() {
             }
         } catch (error: any) {
             console.error("Auth error:", error);
-            alert(error.message || "Помилка авторизації");
+            // Map Firebase errors to user-friendly messages
+            let message = "Помилка авторизації. Перевірте дані.";
+            if (error.code === 'auth/email-already-in-use') {
+                message = "Цей Email вже використовується іншим користувачем.";
+            } else if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+                message = "Невірний Email або пароль.";
+            } else if (error.code === 'auth/weak-password') {
+                message = "Пароль має бути не менше 6 символів.";
+            } else if (error.message) {
+                message = error.message;
+            }
+            setError(message);
         } finally {
-            setBusy(false);
+            setIsLoading(false);
         }
     };
 
@@ -63,6 +77,8 @@ export default function Auth() {
 
                     <h1 className="auth-title">{isLoginView ? 'Вхід' : 'Реєстрація'}</h1>
                     
+                    {error && <div className="auth-error-message">{error}</div>}
+
                     <form onSubmit={handleAuth} className="auth-form">
                         {!isLoginView && (
                             <>
@@ -96,10 +112,19 @@ export default function Auth() {
 
                         <div className="auth-actions">
                             <SiteButton 
-                                text={isLoginView ? "УВІЙТИ" : "ЗАРЕЄСТРУВАТИСЯ"} 
+                                text={isLoading ? "ЗАВАНТАЖЕННЯ..." : (isLoginView ? "УВІЙТИ" : "ЗАРЕЄСТРУВАТИСЯ")} 
                                 type="submit" 
+                                disabled={isLoading}
                             />
-                            <button type="button" className="toggle-btn" onClick={() => setIsLoginView(!isLoginView)}>
+                            <button 
+                                type="button" 
+                                className="toggle-btn" 
+                                onClick={() => {
+                                    setIsLoginView(!isLoginView);
+                                    setError(null);
+                                }}
+                                disabled={isLoading}
+                            >
                                 {isLoginView ? "Немає акаунту? Реєстрація" : "Вже є акаунт? Увійти"}
                             </button>
                         </div>

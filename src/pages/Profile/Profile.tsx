@@ -1,4 +1,4 @@
-import { useContext, useState, useRef, ChangeEvent } from 'react';
+import { useContext, useState, useRef, ChangeEvent, useEffect } from 'react';
 import SiteButton from '../../features/SiteButton/SiteButton';
 import './ui/Profile.css'; 
 import { AppContext } from '../../features/app-context/AppContext';
@@ -6,6 +6,7 @@ import { useSaved } from '../../app/providers/SavedContext';
 import { Layout } from '../../features/layout/Layout';
 import { auth } from '../../app/api/firebase';
 import { signOut, updateProfile } from 'firebase/auth';
+import { Pencil, X, Camera, Mail, Calendar, MapPin } from 'lucide-react';
 
 export default function Profile() {
     const { user } = useContext(AppContext);
@@ -18,6 +19,14 @@ export default function Profile() {
     
     const [editName, setEditName] = useState(user?.name || "");
     const [editImageUrl, setEditImageUrl] = useState(user?.imageUrl || defaultImageUrl);
+
+    // Update local state when user object changes (e.g. after Firebase update)
+    useEffect(() => {
+        if (user) {
+            setEditName(user.name || "");
+            setEditImageUrl(user.imageUrl || defaultImageUrl);
+        }
+    }, [user, defaultImageUrl]);
 
     const handleLogout = async () => {
         try {
@@ -82,26 +91,27 @@ export default function Profile() {
 
             <div className="profile-page">
                 {/* COLUMN 1: LEFT SIDE (IMAGE) */}
-                <div className="location-image-container">
-                    <img 
-                        src={displayImage} 
-                        alt={user.name} 
-                        className="location-image" 
-                    />
-                    
+                <div className="profile-avatar-wrapper">
+                    <div className="location-image-container">
+                        <img 
+                            src={displayImage} 
+                            alt={user.name} 
+                            className="location-image" 
+                        />
+                        
+                        {isEditing && (
+                            <div className="change-photo-overlay" onClick={triggerFileSelect}>
+                                <Camera size={32} />
+                                <span>Змінити фото</span>
+                            </div>
+                        )}
+                    </div>
+
                     <button 
                         className={`bookmark-btn profile-action-btn ${isEditing ? 'active-cancel' : ''}`} 
                         onClick={isEditing ? handleCancel : () => setIsEditing(true)}>
-                       {isEditing ? '✕' : '✎'}
+                       {isEditing ? <X size={20} /> : <Pencil size={20} />}
                     </button>
-                    
-                    
-                    {isEditing && (
-                        <div className="change-photo-overlay" onClick={triggerFileSelect}>
-                            <i className="bi bi-camera-fill"></i>
-                            <span>Змінити фото</span>
-                        </div>
-                    )}
                 </div>
 
                 {/* COLUMN 2: RIGHT SIDE (ALL INFO) */}
@@ -131,7 +141,7 @@ export default function Profile() {
 
                     <div className="info-blocks">
                         <div className="info-item">
-                            <div className="info-icon"><i className="bi bi-envelope"></i></div>
+                            <div className="info-icon"><Mail size={20} /></div>
                             <div className="info-content">
                                 <span className="info-label">Email</span>
                                 <span className="info-value">{user.email}</span>
@@ -144,7 +154,7 @@ export default function Profile() {
                         */}
                         {user.dob && (
                              <div className="info-item">
-                                <div className="info-icon"><i className="bi bi-calendar-event"></i></div>
+                                <div className="info-icon"><Calendar size={20} /></div>
                                 <div className="info-content">
                                     <span className="info-label">Дата народження</span>
                                     <span className="info-value">{user.dob}</span>
@@ -154,7 +164,7 @@ export default function Profile() {
 
                         {user.address && (
                             <div className="info-item">
-                                <div className="info-icon"><i className="bi bi-geo-alt"></i></div>
+                                <div className="info-icon"><MapPin size={20} /></div>
                                 <div className="info-content">
                                     <span className="info-label">Адреса</span>
                                     <span className="info-value">{user.address}</span>
