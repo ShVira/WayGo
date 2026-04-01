@@ -105,17 +105,40 @@ const Home: React.FC = () => {
       return;
     }
     setIsLoading(true);
+    
+    // Determine limit based on radius (<= 2500m is "small")
+    const limit = searchRadius <= 2500 ? 5 : 10;
+    
     try {
       const allRealLocations = await fetchNearbyLocations(searchCenter, searchRadius, selectedVibe);
       
       let finalSet: Location[] = [];
+      
       if (allRealLocations.length > 0) {
-        finalSet = [...allRealLocations].sort(() => 0.5 - Math.random()).slice(0, 10);
+        // Take up to 'limit' random real locations
+        finalSet = [...allRealLocations].sort(() => 0.5 - Math.random()).slice(0, limit);
+        
+        // If we have fewer than 5 real locations, supplement with mocks to reach at least 5
+        if (finalSet.length < 5) {
+          const filteredMocks = selectedVibe 
+            ? MOCK_LOCATIONS.filter(loc => loc.vibes.includes(selectedVibe))
+            : MOCK_LOCATIONS;
+            
+          const needed = 5 - finalSet.length;
+          const additionalMocks = filteredMocks
+            .filter(mock => !finalSet.some(f => f.id === mock.id)) // Avoid duplicates
+            .sort(() => 0.5 - Math.random())
+            .slice(0, needed);
+            
+          finalSet = [...finalSet, ...additionalMocks];
+        }
       } else {
+        // No real locations found, use only mocks (up to limit)
         const filteredMocks = selectedVibe 
           ? MOCK_LOCATIONS.filter(loc => loc.vibes.includes(selectedVibe))
           : MOCK_LOCATIONS;
-        finalSet = [...filteredMocks].sort(() => 0.5 - Math.random());
+        
+        finalSet = [...filteredMocks].sort(() => 0.5 - Math.random()).slice(0, limit);
       }
 
       setLocations(finalSet);
