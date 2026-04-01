@@ -76,6 +76,7 @@ const Home: React.FC = () => {
   const [mapCenter, setMapCenter] = useState<[number, number]>(searchCenter);
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showOutsideUkraineModal, setShowOutsideUkraineModal] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
 
   useEffect(() => {
     setVisualCenter(searchCenter);
@@ -145,6 +146,7 @@ const Home: React.FC = () => {
   const requestCurrentLocation = useCallback(() => {
     if (navigator.geolocation) {
       setIsLoading(true);
+      setSearchError(null);
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
@@ -152,14 +154,15 @@ const Home: React.FC = () => {
           setVisualCenter(newCoords);
           setSearchCenter(newCoords);
           setMapCenter(newCoords);
+          setLocations([]); // Trigger reload for new location
           if (!isInsideUkraine(latitude, longitude)) {
             setShowOutsideUkraineModal(true);
-            setLocations([]);
           }
           setIsLoading(false);
         },
         (error) => {
           console.error('Geolocation error:', error);
+          setSearchError('Не вдалося отримати ваше місцезнаходження.');
           setIsLoading(false);
         },
         { enableHighAccuracy: true, timeout: 5000 }
@@ -171,6 +174,7 @@ const Home: React.FC = () => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
     setIsLoading(true);
+    setSearchError(null);
     try {
       const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&countrycodes=ua`);
       const data = await response.json();
@@ -179,12 +183,14 @@ const Home: React.FC = () => {
         setVisualCenter(newCoords);
         setSearchCenter(newCoords);
         setMapCenter(newCoords);
+        setLocations([]); // Trigger reload for new location
         setSearchQuery('');
       } else {
-        alert('Місце не знайдено в Україні.');
+        setSearchError('Місце не знайдено в Україні.');
       }
     } catch (error) {
       console.error('Geocoding error:', error);
+      setSearchError('Помилка пошуку. Спробуйте пізніше.');
     } finally {
       setIsLoading(false);
     }
@@ -247,6 +253,14 @@ const Home: React.FC = () => {
               {Math.round(visualRadius / 100) / 10} км
             </div>
           </form>
+          
+          {searchError && (
+            <div className="geo-error-notice">
+              <Info size={16} />
+              <span>{searchError}</span>
+              <button onClick={() => setSearchError(null)}>&times;</button>
+            </div>
+          )}
         </section>
 
         <section className="home-page__map-container">

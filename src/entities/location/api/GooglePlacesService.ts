@@ -66,22 +66,39 @@ const getIconForVibes = (vibes: string[]): string => {
   return '📍';
 };
 
+// Map Google Place types to Vibes
+const TYPE_MAPPING: Record<string, string[]> = {
+  cafe: ['ToGo', 'Cozy'],
+  bakery: ['ToGo'],
+  restaurant: ['Social', 'ToGo'],
+  bar: ['Social', 'Special'],
+  night_club: ['Social', 'Special'],
+  park: ['Nature', 'Active'],
+  museum: ['Explore'],
+  art_gallery: ['Explore'],
+  tourist_attraction: ['Explore', 'Special'],
+  church: ['Explore'],
+  gym: ['Active'],
+  stadium: ['Active', 'Special'],
+  zoo: ['Nature'],
+  aquarium: ['Nature'],
+  book_store: ['Cozy'],
+  library: ['Cozy'],
+  spa: ['Cozy'],
+  shopping_mall: ['Social'],
+  cinema: ['Social'],
+  bowling_alley: ['Social'],
+  amusement_park: ['Special'],
+};
+
 const getVibesFromTypes = (types: string[]): string[] => {
   const vibes = new Set<string>();
-  const mapping: Record<string, string[]> = {
-    cafe: ['ToGo', 'Cozy'],
-    bakery: ['ToGo'],
-    restaurant: ['Social', 'ToGo'],
-    bar: ['Social', 'Special'],
-    park: ['Nature', 'Active'],
-    museum: ['Explore'],
-    tourist_attraction: ['Explore', 'Special'],
-    gym: ['Active'],
-  };
   types.forEach(type => {
-    if (mapping[type]) mapping[type].forEach(v => vibes.add(v));
+    if (TYPE_MAPPING[type]) {
+      TYPE_MAPPING[type].forEach(vibe => vibes.add(vibe));
+    }
   });
-  return vibes.size > 0 ? Array.from(vibes) : ['Explore'];
+  return vibes.size > 0 ? Array.from(vibes) : ['Explore']; // Default to Explore if no mapping found
 };
 
 const CACHE_NEARBY: Record<string, Location[]> = {};
