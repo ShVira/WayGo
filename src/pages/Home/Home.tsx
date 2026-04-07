@@ -59,6 +59,20 @@ const ChangeView = ({ center }: { center: [number, number] }) => {
   return null;
 };
 
+const OnMapMove = ({ onMove }: { onMove: (bounds: L.LatLngBounds) => void }) => {
+  const map = useMap();
+  useEffect(() => {
+    const handleMove = () => onMove(map.getBounds());
+    map.on('moveend', handleMove);
+    // Initial bounds
+    handleMove();
+    return () => {
+      map.off('moveend', handleMove);
+    };
+  }, [map, onMove]);
+  return null;
+};
+
 const Home: React.FC = () => {
   const savedState = JSON.parse(sessionStorage.getItem('waygo-home-state') || '{}');
 
@@ -74,6 +88,7 @@ const Home: React.FC = () => {
   const [visualRadius, setVisualRadius] = useState(searchRadius);
 
   const [mapCenter, setMapCenter] = useState<[number, number]>(searchCenter);
+  const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showOutsideUkraineModal, setShowOutsideUkraineModal] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
@@ -100,17 +115,22 @@ const Home: React.FC = () => {
   }, [savedState.center]);
 
   const loadLocations = useCallback(async (isShuffle = false) => {
-    if (!isInsideUkraine(searchCenter[0], searchCenter[1])) {
+    // If shuffling, we want to use the CURRENT visual center/radius (where user is looking)
+    // otherwise use the search center/radius (last confirmed search)
+    const activeCenter = isShuffle ? visualCenter : searchCenter;
+    const activeRadius = isShuffle ? visualRadius : searchRadius;
+
+    if (!isInsideUkraine(activeCenter[0], activeCenter[1])) {
       setLocations([]);
       return;
     }
     setIsLoading(true);
     
     // Determine limit based on radius (<= 2500m is "small")
-    const limit = searchRadius <= 2500 ? 5 : 10;
+    const limit = activeRadius <= 2500 ? 5 : 10;
     
     try {
-      const allRealLocations = await fetchNearbyLocations(searchCenter, searchRadius, selectedVibe);
+      const allRealLocations = await fetchNearbyLocations(activeCenter, activeRadius, selectedVibe);
       
       let finalSet: Location[] = [];
       
@@ -142,15 +162,20 @@ const Home: React.FC = () => {
       }
 
       setLocations(finalSet);
-      if (isShuffle && finalSet.length > 0) {
-        setMapCenter(finalSet[0].coords);
+      if (isShuffle) {
+        // When shuffling, we "confirm" the current visual center as the new search center
+        setSearchCenter(activeCenter);
+        setSearchRadius(activeRadius);
+        if (finalSet.length > 0) {
+          setMapCenter(finalSet[0].coords);
+        }
       }
     } catch (error) {
       console.error('Error loading locations:', error);
     } finally {
       setIsLoading(false);
     }
-  }, [searchCenter, searchRadius, selectedVibe]);
+  }, [searchCenter, searchRadius, visualCenter, visualRadius, selectedVibe]);
 
   useEffect(() => {
     if (locations.length === 0) {
@@ -199,7 +224,17 @@ const Home: React.FC = () => {
     setIsLoading(true);
     setSearchError(null);
     try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&countrycodes=ua`);
+      let url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&countrycodes=ua`;
+      
+      // Add location bias if map bounds are available
+      if (mapBounds) {
+        const sw = mapBounds.getSouthWest();
+        const ne = mapBounds.getNorthEast();
+        // Nominatim viewbox is left,top,right,bottom (lon,lat,lon,lat)
+        url += `&viewbox=${sw.lng},${ne.lat},${ne.lng},${sw.lat}&bounded=0`; // bounded=0 means bias, bounded=1 means strict
+      }
+
+      const response = await fetch(url);
       const data = await response.json();
       if (data && data.length > 0) {
         const newCoords: [number, number] = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
@@ -290,6 +325,7 @@ const Home: React.FC = () => {
           <MapContainer center={mapCenter} zoom={14} scrollWheelZoom={true} className="home-map">
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             <ChangeView center={mapCenter} />
+            <OnMapMove onMove={setMapBounds} />
             
             {isMapInUkraine && (
               <>
