@@ -84,8 +84,16 @@ export const useGooglePlacePhoto = (googlePlaceId: string | undefined, fallbackI
               place.photos &&
               place.photos.length > 0
             ) {
-              // Request the photo URL
-              const url = place.photos[0].getUrl({ maxWidth: 800 });
+              const photo = place.photos[0];
+              const photoReference = (photo as any).photo_reference || photo.photo_reference;
+              
+              let url = '';
+              if (photoReference) {
+                url = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=${photoReference}&key=${GOOGLE_MAPS_API_KEY}`;
+              } else {
+                url = photo.getUrl({ maxWidth: 800 });
+              }
+
               CACHE[googlePlaceId] = url;
               setPhotoUrl(url);
             } else {

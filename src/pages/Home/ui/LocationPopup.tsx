@@ -22,7 +22,6 @@ export const LocationPopup: React.FC<LocationPopupProps> = ({ location }) => {
       <h3>{location.name}</h3>
       <p>
         <span className="map-popup__rating">⭐ {location.rating}</span> 
-        • {location.distance}
       </p>
       <div className="map-popup__vibes">
         {location.vibes.slice(0, 2).map(vibe => (

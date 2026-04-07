@@ -1,8 +1,7 @@
-import { Location } from './MockLocations';
+import { Location, MOCK_LOCATIONS } from './MockLocations';
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
 
-// Add type definition for window.google
 declare global {
   interface Window {
     google: any;
@@ -22,29 +21,67 @@ const loadGoogleMapsScript = (): Promise<void> => {
       resolve();
       return;
     }
-
-    if (!GOOGLE_MAPS_API_KEY) {
-      console.warn('Google Maps API key is missing.');
-      reject(new Error('API Key missing'));
-      return;
-    }
-
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places&language=uk`;
     script.async = true;
     script.defer = true;
     script.onload = () => {
       scriptLoaded = true;
       resolve();
     };
-    script.onerror = (e) => {
-      console.error('Failed to load Google Maps script', e);
-      reject(e);
-    };
+    script.onerror = (e) => reject(e);
     document.head.appendChild(script);
   });
 
   return scriptLoadingPromise;
+};
+
+const mapVibeToGoogleType = (vibe: string): string | undefined => {
+  switch (vibe) {
+    case 'ToGo': return 'cafe';
+    case 'Explore': return 'tourist_attraction';
+    case 'Cozy': return 'cafe';
+    case 'Active': return 'park';
+    case 'Social': return 'restaurant';
+    case 'Nature': return 'park';
+    case 'Special': return 'museum';
+    default: return undefined;
+  }
+};
+
+const getDiverseFallback = (place: any): string => {
+  const type = place.types?.[0] || 'place';
+  const id = place.place_id || 'random';
+  // Use the ID itself for the lock to ensure uniqueness if we MUST use a fallback
+  return `https://loremflickr.com/800/600/${type},landscape/all?lock=${id}`;
+};
+
+const getPhotoUrl = (place: any, maxWidth: number): string => {
+  if (place.photos && place.photos.length > 0) {
+    const photo = place.photos[0];
+    // In Google Maps JS SDK, the photo_reference is often stored in the photo object
+    // but not exposed in the TypeScript definitions.
+    const photoReference = photo.photo_reference || (photo as any).photo_reference;
+    
+    if (photoReference) {
+      return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${maxWidth}&photoreference=${photoReference}&key=${GOOGLE_MAPS_API_KEY}`;
+    }
+    
+    // Fallback to getUrl if photo_reference is somehow missing
+    return photo.getUrl({ maxWidth });
+  }
+  return getDiverseFallback(place);
+};
+
+const getIconForVibes = (vibes: string[]): string => {
+  if (vibes.includes('ToGo')) return '⚡';
+  if (vibes.includes('Cozy')) return '☕';
+  if (vibes.includes('Social')) return '🍸';
+  if (vibes.includes('Nature')) return '🌿';
+  if (vibes.includes('Active')) return '🏃';
+  if (vibes.includes('Explore')) return '🧭';
+  if (vibes.includes('Special')) return '✨';
+  return '📍';
 };
 
 // Map Google Place types to Vibes
@@ -82,18 +119,6 @@ const getVibesFromTypes = (types: string[]): string[] => {
   return vibes.size > 0 ? Array.from(vibes) : ['Explore']; // Default to Explore if no mapping found
 };
 
-const getIconForVibes = (vibes: string[]): string => {
-  if (vibes.includes('ToGo')) return '⚡';
-  if (vibes.includes('Cozy')) return '☕';
-  if (vibes.includes('Social')) return '🍸';
-  if (vibes.includes('Nature')) return '🌿';
-  if (vibes.includes('Active')) return '🏃';
-  if (vibes.includes('Explore')) return '🧭';
-  if (vibes.includes('Special')) return '✨';
-  return '📍';
-};
-
-// Simple session cache to minimize API calls
 const CACHE_NEARBY: Record<string, Location[]> = {};
 const CACHE_DETAILS: Record<string, Location> = {};
 
@@ -103,96 +128,60 @@ export const fetchNearbyLocations = async (
   vibe?: string | null
 ): Promise<Location[]> => {
   const cacheKey = `${center[0].toFixed(4)},${center[1].toFixed(4)},${radius},${vibe || 'all'}`;
-  
-  if (CACHE_NEARBY[cacheKey]) {
-    console.log('Returning nearby locations from cache');
-    return CACHE_NEARBY[cacheKey];
-  }
+  if (CACHE_NEARBY[cacheKey]) return CACHE_NEARBY[cacheKey];
 
   try {
     await loadGoogleMapsScript();
-
-    if (!window.google || !window.google.maps || !window.google.maps.places) {
-      throw new Error('Google Maps Places library not loaded');
-    }
-
     const mapDiv = document.createElement('div');
     const service = new window.google.maps.places.PlacesService(mapDiv);
 
-    return new Promise((resolve, reject) => {
-      const request: any = {
+    return new Promise((resolve) => {
+      service.nearbySearch({
         location: new window.google.maps.LatLng(center[0], center[1]),
         radius: radius,
-        type: vibe ? mapVibeToGoogleType(vibe) : undefined,
-      };
-
-      service.nearbySearch(request, (results: any[], status: any) => {
+        type: vibe ? mapVibeToGoogleType(vibe) : undefined
+      }, (results: any[], status: any) => {
         if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
-          const locations: Location[] = results.map((place) => {
+          const locations = results
+            .filter(place => place.photos && place.photos.length > 0)
+            .map((place) => {
             const vibes = getVibesFromTypes(place.types || []);
             return {
               id: place.place_id,
               googlePlaceId: place.place_id,
               name: place.name,
-              distance: 'Nearby', 
+              distance: 'Поруч', 
               rating: place.rating || 0,
-              image: place.photos && place.photos.length > 0 
-                ? place.photos[0].getUrl({ maxWidth: 800 }) 
-                : 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop',
+              image: getPhotoUrl(place, 800),
               vibes: vibes,
               icon: getIconForVibes(vibes),
               coords: [place.geometry.location.lat(), place.geometry.location.lng()],
               reviewUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name)}&query_place_id=${place.place_id}`,
-              description: 'Real location from Google Maps.',
-              address: place.vicinity || 'Address not available',
-              hours: place.opening_hours ? (place.opening_hours.isOpen() ? 'Open now' : 'Closed') : 'Hours not available',
+              description: 'Локація з Google Maps.',
+              address: place.vicinity || 'Адреса недоступна',
+              hours: place.opening_hours ? (place.opening_hours.isOpen() ? 'Відчинено' : 'Зачинено') : 'Немає даних',
             };
           });
-
-          const filtered = vibe 
-            ? locations.filter(loc => loc.vibes.includes(vibe))
-            : locations;
-
-          CACHE_NEARBY[cacheKey] = filtered;
-          resolve(filtered);
-        } else if (status === window.google.maps.places.PlacesServiceStatus.ZERO_RESULTS) {
-          CACHE_NEARBY[cacheKey] = [];
-          resolve([]);
-        } else {
-          reject(new Error(`Nearby Search failed with status: ${status}`));
-        }
+          CACHE_NEARBY[cacheKey] = locations;
+          resolve(locations);
+        } else resolve([]);
       });
     });
   } catch (error) {
-    console.error('Error fetching nearby locations:', error);
     return [];
   }
 };
 
 export const fetchLocationDetails = async (placeId: string): Promise<Location | null> => {
-  if (CACHE_DETAILS[placeId]) {
-    console.log('Returning location details from cache');
-    return CACHE_DETAILS[placeId];
-  }
-
+  if (CACHE_DETAILS[placeId]) return CACHE_DETAILS[placeId];
   try {
     await loadGoogleMapsScript();
-
-    if (!window.google || !window.google.maps || !window.google.maps.places) {
-      throw new Error('Google Maps Places library not loaded');
-    }
-
     const mapDiv = document.createElement('div');
     const service = new window.google.maps.places.PlacesService(mapDiv);
-
-    return new Promise((resolve, reject) => {
-      // requesting ONLY necessary fields to save quota/costs
+    return new Promise((resolve) => {
       service.getDetails({ 
         placeId: placeId,
-        fields: [
-          'name', 'rating', 'photos', 'geometry', 'url', 
-          'editorial_summary', 'formatted_address', 'opening_hours', 'types', 'place_id'
-        ]
+        fields: ['name', 'rating', 'photos', 'geometry', 'url', 'editorial_summary', 'formatted_address', 'opening_hours', 'types', 'place_id']
       }, (place: any, status: any) => {
         if (status === window.google.maps.places.PlacesServiceStatus.OK && place) {
           const vibes = getVibesFromTypes(place.types || []);
@@ -200,41 +189,24 @@ export const fetchLocationDetails = async (placeId: string): Promise<Location | 
             id: place.place_id,
             googlePlaceId: place.place_id,
             name: place.name,
-            distance: 'Nearby',
+            distance: 'Поруч',
             rating: place.rating || 0,
-            image: place.photos && place.photos.length > 0 
-              ? place.photos[0].getUrl({ maxWidth: 1200 }) 
-              : 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop',
+            image: getPhotoUrl(place, 1200),
             vibes: vibes,
             icon: getIconForVibes(vibes),
             coords: [place.geometry.location.lat(), place.geometry.location.lng()],
             reviewUrl: place.url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name)}&query_place_id=${place.place_id}`,
-            description: place.editorial_summary?.overview || place.formatted_address || 'Real location from Google Maps.',
-            address: place.formatted_address || place.vicinity || 'Address not available',
-            hours: place.opening_hours ? (place.opening_hours.isOpen() ? 'Open now' : 'Closed') : 'Hours not available',
+            description: place.editorial_summary?.overview || 'Локація з Google Maps.',
+            address: place.formatted_address || place.vicinity || 'Адреса недоступна',
+            hours: place.opening_hours ? (place.opening_hours.isOpen() ? 'Відчинено' : 'Зачинено') : 'Немає даних',
+            weekdayText: place.opening_hours?.weekday_text || [],
           };
           CACHE_DETAILS[placeId] = location;
           resolve(location);
-        } else {
-          reject(new Error(`Get Details failed with status: ${status}`));
-        }
+        } else resolve(null);
       });
     });
   } catch (error) {
-    console.error('Error fetching location details:', error);
     return null;
-  }
-};
-
-const mapVibeToGoogleType = (vibe: string): string | undefined => {
-  switch (vibe) {
-    case 'ToGo': return 'cafe';
-    case 'Explore': return 'tourist_attraction';
-    case 'Cozy': return 'cafe';
-    case 'Active': return 'park';
-    case 'Social': return 'restaurant';
-    case 'Nature': return 'park';
-    case 'Special': return 'museum';
-    default: return undefined;
   }
 };

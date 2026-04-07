@@ -1,4 +1,4 @@
-import { useContext, useState, useRef, ChangeEvent } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import SiteButton from '../../features/SiteButton/SiteButton';
 import './ui/Profile.css'; 
 import { AppContext } from '../../features/app-context/AppContext';
@@ -6,18 +6,23 @@ import { useSaved } from '../../app/providers/SavedContext';
 import { Layout } from '../../features/layout/Layout';
 import { auth } from '../../app/api/firebase';
 import { signOut, updateProfile } from 'firebase/auth';
+import { Pencil, X, Mail, Calendar, MapPin } from 'lucide-react';
 
 export default function Profile() {
     const { user } = useContext(AppContext);
     const { savedLocations } = useSaved();
     
-    const fileInputRef = useRef<HTMLInputElement>(null);
-    const defaultImageUrl = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-
     const [isEditing, setIsEditing] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
     
     const [editName, setEditName] = useState(user?.name || "");
-    const [editImageUrl, setEditImageUrl] = useState(user?.imageUrl || defaultImageUrl);
+
+    // Update local state when user object changes
+    useEffect(() => {
+        if (user) {
+            setEditName(user.name || "");
+        }
+    }, [user]);
 
     const handleLogout = async () => {
         try {
@@ -27,97 +32,60 @@ export default function Profile() {
         }
     };
 
-    const triggerFileSelect = () => {
-        if (isEditing) fileInputRef.current?.click();
-    };
-
-    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setEditImageUrl(reader.result as string);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
     const handleSave = async () => {
         if (!auth.currentUser) return;
         
+        setIsSaving(true);
         try {
             await updateProfile(auth.currentUser, {
-                displayName: editName,
-                photoURL: editImageUrl
+                displayName: editName
             });
             setIsEditing(false);
-            // AppContext will automatically update via onAuthStateChanged
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error updating profile:", error);
-            alert("Помилка оновлення профілю");
+            alert(`Помилка: ${error.message || "Не вдалося оновити ім'я"}`);
+        } finally {
+            setIsSaving(false);
         }
     };
 
     const handleCancel = () => {
         if (user) {
             setEditName(user.name || "");
-            setEditImageUrl(user.imageUrl || defaultImageUrl);
         }
         setIsEditing(false);
     };
 
     if (!user) return null;
 
-    const displayImage = editImageUrl || user.imageUrl || defaultImageUrl;
-
     return (
         <Layout>
-            <input 
-                type="file" 
-                ref={fileInputRef} 
-                onChange={handleFileChange} 
-                style={{ display: 'none' }} 
-                accept="image/*"
-            />
-
-            <div className="profile-page">
-                {/* COLUMN 1: LEFT SIDE (IMAGE) */}
-                <div className="location-image-container">
-                    <img 
-                        src={displayImage} 
-                        alt={user.name} 
-                        className="location-image" 
-                    />
-                    
-                    <button 
-                        className={`bookmark-btn profile-action-btn ${isEditing ? 'active-cancel' : ''}`} 
-                        onClick={isEditing ? handleCancel : () => setIsEditing(true)}>
-                       {isEditing ? '✕' : '✎'}
-                    </button>
-                    
-                    
-                    {isEditing && (
-                        <div className="change-photo-overlay" onClick={triggerFileSelect}>
-                            <i className="bi bi-camera-fill"></i>
-                            <span>Змінити фото</span>
-                        </div>
-                    )}
-                </div>
-
-                {/* COLUMN 2: RIGHT SIDE (ALL INFO) */}
+            <div className="profile-page profile-page--no-photo">
                 <div className="profile-details-column">
                     <header className="profile-header">
                         <div className="title-section">
-                            {isEditing ? (
-                                <input 
-                                    className="edit-input title-input" 
-                                    value={editName} 
-                                    onChange={(e) => setEditName(e.target.value)} 
-                                    autoFocus
-                                />
-                            ) : (
-                                <h1 className="location-title">{user.name}</h1>
-                            )}
+                            <div className="title-row">
+                                {isEditing ? (
+                                    <input 
+                                        className="edit-input title-input" 
+                                        value={editName} 
+                                        onChange={(e) => setEditName(e.target.value)} 
+                                        autoFocus
+                                        disabled={isSaving}
+                                    />
+                                ) : (
+                                    <h1 className="location-title">{user.name}</h1>
+                                )}
+                                
+                                <button 
+                                    className={`profile-edit-trigger ${isEditing ? 'active-cancel' : ''}`} 
+                                    onClick={isEditing ? handleCancel : () => setIsEditing(true)}
+                                    disabled={isSaving}
+                                    title={isEditing ? "Скасувати" : "Редагувати профіль"}
+                                >
+                                   {isEditing ? <X size={20} /> : <Pencil size={20} />}
+                                </button>
+                            </div>
                             <p className="location-distance">{user.email}</p>
                         </div>
                         
@@ -131,20 +99,16 @@ export default function Profile() {
 
                     <div className="info-blocks">
                         <div className="info-item">
-                            <div className="info-icon"><i className="bi bi-envelope"></i></div>
+                            <div className="info-icon"><Mail size={20} /></div>
                             <div className="info-content">
                                 <span className="info-label">Email</span>
                                 <span className="info-value">{user.email}</span>
                             </div>
                         </div>
 
-                        {/* Note: address and dob are not in Firebase Auth by default. 
-                            If needed, these should be stored in Firestore 'users' collection. 
-                            For now, we display them as read-only if they exist in user object. 
-                        */}
                         {user.dob && (
                              <div className="info-item">
-                                <div className="info-icon"><i className="bi bi-calendar-event"></i></div>
+                                <div className="info-icon"><Calendar size={20} /></div>
                                 <div className="info-content">
                                     <span className="info-label">Дата народження</span>
                                     <span className="info-value">{user.dob}</span>
@@ -154,7 +118,7 @@ export default function Profile() {
 
                         {user.address && (
                             <div className="info-item">
-                                <div className="info-icon"><i className="bi bi-geo-alt"></i></div>
+                                <div className="info-icon"><MapPin size={20} /></div>
                                 <div className="info-content">
                                     <span className="info-label">Адреса</span>
                                     <span className="info-value">{user.address}</span>
@@ -165,7 +129,12 @@ export default function Profile() {
 
                     <div className="profile-actions">
                         {isEditing ? (
-                            <SiteButton text="Зберегти зміни" onClick={handleSave} />
+                            <SiteButton 
+                                text={isSaving ? "Зберігаємо..." : "Зберегти зміни"} 
+                                onClick={handleSave}
+                                icon={isSaving ? "spinner" : undefined}
+                                disabled={isSaving}
+                            />
                         ) : (
                             <SiteButton text="Вийти з профілю" onClick={handleLogout} />
                         )}

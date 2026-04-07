@@ -45,6 +45,26 @@
     margin-bottom: 32px;
 }
 
+.auth-error-message {
+    background-color: #fff1f0;
+    border: 1px solid #ffa39e;
+    color: #f5222d;
+    padding: 12px 16px;
+    border-radius: 16px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 24px;
+    text-align: left;
+    line-height: 1.4;
+    animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
 /* Inputs */
 .input-group {
     width: 100%;
@@ -79,37 +99,6 @@
     background: white;
     border-color: #4CAF50;
     box-shadow: 0 0 0 4px rgba(74, 175, 80, 0.1);
-}
-
-/* Avatar Section */
-.avatar-upload-container {
-    margin-bottom: 24px;
-}
-
-.upload-avatar-circle {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background-color: #f2f2f7;
-    border: 2px dashed #cecece;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-    cursor: pointer;
-    color: #8e8e93;
-    transition: all 0.2s ease;
-}
-
-.upload-avatar-circle:hover {
-    border-color: #4CAF50;
-    color: #4CAF50;
-}
-
-.upload-text {
-    font-size: 12px;
-    color: #8e8e93;
-    margin-top: 8px;
 }
 
 /* Actions */

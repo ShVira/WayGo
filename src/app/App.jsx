@@ -16,7 +16,6 @@ import { AppContext, AppProvider } from "../features/app-context/AppContext";
 function AppRoutes() {
   const { user, isBusy } = useContext(AppContext);
 
-  // Use isBusy from AppContext which tracks Firebase Auth state
   if (isBusy) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'white', color: '#4caf50', fontWeight: 'bold' }}>
@@ -26,17 +25,15 @@ function AppRoutes() {
   }
 
   return (
-   <Routes>
-  <Route path="/" element={<Home />} />
-  <Route path="/location/:id" element={<LocationPage />} />
-  <Route path="/saved" element={<SavedPage />} />
-  <Route path="/history" element={<History />} />
-  <Route path="/profile" element={user ? <Profile /> : <Auth />} />
-  <Route path="/auth" element={user ? <Profile /> : <Auth />} />
-  
-  {/* Add this line to catch unmatched routes */}
-  <Route path="*" element={<div>Сторінку не знайдено (404)</div>} />
-</Routes>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/location/:id" element={<LocationPage />} />
+      <Route path="/saved" element={<SavedPage />} />
+      <Route path="/history" element={<History />} />
+      <Route path="/profile" element={user ? <Profile /> : <Auth />} />
+      <Route path="/auth" element={user ? <Profile /> : <Auth />} />
+      <Route path="*" element={<div>Сторінку не знайдено (404)</div>} />
+    </Routes>
   );
 }
 
@@ -45,13 +42,13 @@ export default function App() {
 
   return (
     <AppProvider>
-      <SavedProvider>
-        <HistoryProvider>
-          <BrowserRouter basename={basename}>
+      <BrowserRouter basename={basename}>
+        <SavedProvider>
+          <HistoryProvider>
             <AppRoutes />
-          </BrowserRouter>
-        </HistoryProvider>
-      </SavedProvider>
+          </HistoryProvider>
+        </SavedProvider>
+      </BrowserRouter>
     </AppProvider>
   );
 }
