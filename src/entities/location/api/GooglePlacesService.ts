@@ -159,7 +159,12 @@ export const fetchNearbyLocations = async (
               reviewUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name)}&query_place_id=${place.place_id}`,
               description: 'Локація з Google Maps.',
               address: place.vicinity || 'Адреса недоступна',
-              hours: place.opening_hours ? (place.opening_hours.isOpen() ? 'Відчинено' : 'Зачинено') : 'Немає даних',
+              hours: place.opening_hours 
+                ? (place.opening_hours.open_now !== undefined 
+                    ? (place.opening_hours.open_now ? 'Відчинено' : 'Зачинено') 
+                    : (place.opening_hours.isOpen() ? 'Відчинено' : 'Зачинено')) 
+                : 'Немає даних',
+              userRatingsTotal: place.user_ratings_total || 0,
             };
           });
           CACHE_NEARBY[cacheKey] = locations;
@@ -181,7 +186,7 @@ export const fetchLocationDetails = async (placeId: string): Promise<Location | 
     return new Promise((resolve) => {
       service.getDetails({ 
         placeId: placeId,
-        fields: ['name', 'rating', 'photos', 'geometry', 'url', 'editorial_summary', 'formatted_address', 'opening_hours', 'types', 'place_id']
+        fields: ['name', 'rating', 'user_ratings_total', 'photos', 'geometry', 'url', 'editorial_summary', 'formatted_address', 'opening_hours', 'types', 'place_id']
       }, (place: any, status: any) => {
         if (status === window.google.maps.places.PlacesServiceStatus.OK && place) {
           const vibes = getVibesFromTypes(place.types || []);
@@ -191,6 +196,7 @@ export const fetchLocationDetails = async (placeId: string): Promise<Location | 
             name: place.name,
             distance: 'Поруч',
             rating: place.rating || 0,
+            userRatingsTotal: place.user_ratings_total || 0,
             image: getPhotoUrl(place, 1200),
             vibes: vibes,
             icon: getIconForVibes(vibes),
@@ -198,7 +204,11 @@ export const fetchLocationDetails = async (placeId: string): Promise<Location | 
             reviewUrl: place.url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name)}&query_place_id=${place.place_id}`,
             description: place.editorial_summary?.overview || 'Локація з Google Maps.',
             address: place.formatted_address || place.vicinity || 'Адреса недоступна',
-            hours: place.opening_hours ? (place.opening_hours.isOpen() ? 'Відчинено' : 'Зачинено') : 'Немає даних',
+            hours: place.opening_hours 
+              ? (place.opening_hours.open_now !== undefined 
+                  ? (place.opening_hours.open_now ? 'Відчинено' : 'Зачинено') 
+                  : (place.opening_hours.isOpen() ? 'Відчинено' : 'Зачинено')) 
+              : 'Немає даних',
             weekdayText: place.opening_hours?.weekday_text || [],
           };
           CACHE_DETAILS[placeId] = location;
