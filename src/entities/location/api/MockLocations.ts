@@ -11,6 +11,7 @@ export interface Location {
   description: string;
   address: string;
   hours: string;
+  userRatingsTotal?: number;
   weekdayText?: string[];
   googlePlaceId?: string;
 }
@@ -29,6 +30,7 @@ export const MOCK_LOCATIONS: Location[] = [
     description: 'Об\'єкт всесвітньої спадщини ЮНЕСКО та один із найбільш значущих православних монастирів у Східній Європі. Заснована у 1051 році, вона відома своєю розгалуженою мережею підземних печер.',
     address: 'вул. Лаврська, 15, Київ',
     hours: '09:00 — 18:00',
+    userRatingsTotal: 1250,
     googlePlaceId: 'ChIJffjBqUivEmsRRruygYugQnU'
   },
   {
@@ -44,6 +46,7 @@ export const MOCK_LOCATIONS: Location[] = [
     description: 'Унікальний культурний простір та бар, захований у затишному дворику. Розпочавши свій шлях як справжній сквот, він перетворився на улюблений центр спільноти, відомий своєю богемною атмосферою, муралами та літньою терасою.',
     address: 'вул. Терещенківська, 17Б, Київ',
     hours: '11:00 — 22:00',
+    userRatingsTotal: 840,
     googlePlaceId: 'ChIJhffeemdl6IgRcSa52Oq9sB8'
   },
   {
@@ -59,6 +62,7 @@ export const MOCK_LOCATIONS: Location[] = [
     description: 'Трендове, атмосферне кафе на історичній вулиці Рейтарській. Відоме своїм інтер\'єром у стилі модерн середини століття, м\'яким джазом та вечорами при свічках. У меню — європейська кухня та авторські коктейлі.',
     address: 'вул. Рейтарська, 13, Київ',
     hours: '09:00 — 22:00',
+    userRatingsTotal: 1100,
     googlePlaceId: 'ChIJ_6WJ_RKs823puRempCgO-FE'
   },
   {
@@ -74,6 +78,7 @@ export const MOCK_LOCATIONS: Location[] = [
     description: 'Затишна та соціально відповідальна кав\'ярня. Унікальний інтер\'єр з ілюстраціями зникаючих тварин Червоної книги України. Спеціалізується на якісній каві, сніданках протягом усього дня та різноманітних десертах.',
     address: 'вул. Євгена Чикаленка, 5, Київ',
     hours: '08:00 — 21:00',
+    userRatingsTotal: 950,
     googlePlaceId: 'ChIJYQav-TCWhgVybgCPnQwJu5M'
   },
   {
@@ -89,6 +94,7 @@ export const MOCK_LOCATIONS: Location[] = [
     description: 'Один із найбільших ботанічних садів Європи, що займає 130 гектарів на Печерських пагорбах. Найбільш відомий своєю колекцією бузку та захоплюючими панорамними видами на Дніпро та Видубицький монастир.',
     address: 'вул. Тимірязєвська, 1, Київ',
     hours: '08:30 — 21:00',
+    userRatingsTotal: 3400,
     googlePlaceId: 'ChIJ_3iezoHqhn27nmNU_RktEGt'
   }
 ];
