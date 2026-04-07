@@ -9,7 +9,7 @@ import { signOut, updateProfile } from 'firebase/auth';
 import { Pencil, X, Mail, Calendar, MapPin } from 'lucide-react';
 
 export default function Profile() {
-    const { user } = useContext(AppContext);
+    const { user, setUser } = useContext(AppContext);
     const { savedLocations } = useSaved();
     
     const [isEditing, setIsEditing] = useState(false);
@@ -33,13 +33,20 @@ export default function Profile() {
     };
 
     const handleSave = async () => {
-        if (!auth.currentUser) return;
+        if (!auth.currentUser || !user) return;
         
         setIsSaving(true);
         try {
             await updateProfile(auth.currentUser, {
                 displayName: editName
             });
+
+            // Update global state immediately for reactive UI
+            setUser({
+                ...user,
+                name: editName
+            });
+
             setIsEditing(false);
         } catch (error: any) {
             console.error("Error updating profile:", error);
