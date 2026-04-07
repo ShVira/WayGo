@@ -6,6 +6,7 @@ import './ui/Location.css';
 import { useState, useEffect } from 'react';
 import { useSaved } from '../../app/providers/SavedContext';
 import { useHistory } from '../../app/providers/HistoryContext'; // Import the history hook
+import { calculateDistance, formatDistance } from '../../shared/utils/distance';
 import { 
   ChevronLeft, 
   MapPin, 
@@ -25,10 +26,32 @@ const LocationPage = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [location, setLocation] = useState<Location | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [userCoords, setUserCoords] = useState<[number, number] | null>(null);
+  const [isLocating, setIsLocating] = useState(true);
   
   // Contexts
   const { savedLocations, toggleSave } = useSaved();
   const { addToHistory } = useHistory();
+
+  // Fetch User Location
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserCoords([position.coords.latitude, position.coords.longitude]);
+          setIsLocating(false);
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          setIsLocating(false);
+          // Fallback to Kyiv center if denied/failed
+          setUserCoords([50.4501, 30.5234]);
+        }
+      );
+    } else {
+      setIsLocating(false);
+    }
+  }, []);
 
   useEffect(() => {
     const loadLocation = async () => {
@@ -100,6 +123,19 @@ const LocationPage = () => {
     toggleSave(location);
   };
 
+  const getDynamicDistance = () => {
+    if (isLocating) return 'Визначаємо...';
+    if (!userCoords) return location.distance; // Fallback to mock distance
+
+    const dist = calculateDistance(
+      userCoords[0],
+      userCoords[1],
+      location.coords[0],
+      location.coords[1]
+    );
+    return `${formatDistance(dist)} від вас`;
+  };
+
   return (
     <Layout>
       <div className="location-page">
@@ -150,9 +186,9 @@ const LocationPage = () => {
                 ))}
               </div>
               <h1 className="location-title">{location.name}</h1>
-              <div className="distance-badge">
+              <div className={`distance-badge ${isLocating ? 'loading' : ''}`}>
                 <MapPin size={14} />
-                <span>{location.distance} від вас</span>
+                <span>{getDynamicDistance()}</span>
               </div>
             </div>
             
