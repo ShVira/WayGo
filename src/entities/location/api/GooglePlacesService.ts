@@ -52,7 +52,25 @@ const mapVibeToGoogleType = (vibe: string): string | undefined => {
 const getDiverseFallback = (place: any): string => {
   const type = place.types?.[0] || 'place';
   const id = place.place_id || 'random';
-  return `https://loremflickr.com/800/600/${type},landscape/all?lock=${id.length}`;
+  // Use the ID itself for the lock to ensure uniqueness if we MUST use a fallback
+  return `https://loremflickr.com/800/600/${type},landscape/all?lock=${id}`;
+};
+
+const getPhotoUrl = (place: any, maxWidth: number): string => {
+  if (place.photos && place.photos.length > 0) {
+    const photo = place.photos[0];
+    // In Google Maps JS SDK, the photo_reference is often stored in the photo object
+    // but not exposed in the TypeScript definitions.
+    const photoReference = photo.photo_reference || (photo as any).photo_reference;
+    
+    if (photoReference) {
+      return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${maxWidth}&photoreference=${photoReference}&key=${GOOGLE_MAPS_API_KEY}`;
+    }
+    
+    // Fallback to getUrl if photo_reference is somehow missing
+    return photo.getUrl({ maxWidth });
+  }
+  return getDiverseFallback(place);
 };
 
 const getIconForVibes = (vibes: string[]): string => {
@@ -124,7 +142,9 @@ export const fetchNearbyLocations = async (
         type: vibe ? mapVibeToGoogleType(vibe) : undefined
       }, (results: any[], status: any) => {
         if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
-          const locations = results.map((place) => {
+          const locations = results
+            .filter(place => place.photos && place.photos.length > 0)
+            .map((place) => {
             const vibes = getVibesFromTypes(place.types || []);
             return {
               id: place.place_id,
@@ -132,7 +152,7 @@ export const fetchNearbyLocations = async (
               name: place.name,
               distance: 'Поруч', 
               rating: place.rating || 0,
-              image: place.photos && place.photos.length > 0 ? place.photos[0].getUrl({ maxWidth: 800 }) : getDiverseFallback(place),
+              image: getPhotoUrl(place, 800),
               vibes: vibes,
               icon: getIconForVibes(vibes),
               coords: [place.geometry.location.lat(), place.geometry.location.lng()],
@@ -171,7 +191,7 @@ export const fetchLocationDetails = async (placeId: string): Promise<Location | 
             name: place.name,
             distance: 'Поруч',
             rating: place.rating || 0,
-            image: place.photos && place.photos.length > 0 ? place.photos[0].getUrl({ maxWidth: 1200 }) : getDiverseFallback(place),
+            image: getPhotoUrl(place, 1200),
             vibes: vibes,
             icon: getIconForVibes(vibes),
             coords: [place.geometry.location.lat(), place.geometry.location.lng()],

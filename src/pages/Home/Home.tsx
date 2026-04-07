@@ -126,7 +126,7 @@ const Home: React.FC = () => {
             
           const needed = 5 - finalSet.length;
           const additionalMocks = filteredMocks
-            .filter(mock => !finalSet.some(f => f.id === mock.id)) // Avoid duplicates
+            .filter(mock => !finalSet.some(f => f.id === mock.id || (f.googlePlaceId && f.googlePlaceId === mock.googlePlaceId)))
             .sort(() => 0.5 - Math.random())
             .slice(0, needed);
             
