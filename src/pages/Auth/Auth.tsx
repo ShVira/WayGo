@@ -16,8 +16,22 @@ export default function Auth() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    // Validation regex
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    const isPasswordValid = isLoginView || passwordRegex.test(password);
+    const isEmailValid = isLoginView || emailRegex.test(email);
+    const isNameValid = isLoginView || name.trim().length > 0;
+
+    const isFormValid = isLoginView 
+        ? (email.length > 0 && password.length > 0)
+        : (isPasswordValid && isEmailValid && isNameValid);
+
     const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!isFormValid) return;
+
         setIsLoading(true);
         setError(null);
 
@@ -70,24 +84,31 @@ export default function Auth() {
                             <div className="input-group">
                                 <label>ПІБ</label>
                                 <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Василь Васильович" required />
+                                {!isNameValid && name.length > 0 && <span className="input-error-hint">Введіть ім'я</span>}
                             </div>
                         )}
 
                         <div className="input-group">
                             <label>Email</label>
                             <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="mail@example.com" required />
+                            {!isEmailValid && email.length > 0 && <span className="input-error-hint">Некоректний формат email</span>}
                         </div>
 
                         <div className="input-group">
                             <label>Пароль</label>
                             <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required />
+                            {!isPasswordValid && !isLoginView && password.length > 0 && (
+                                <span className="input-error-hint">
+                                    Пароль має містити від 8 символів, 1 велику літеру та 1 цифру
+                                </span>
+                            )}
                         </div>
 
                         <div className="auth-actions">
                             <SiteButton 
                                 text={isLoading ? "ЗАВАНТАЖЕННЯ..." : (isLoginView ? "УВІЙТИ" : "ЗАРЕЄСТРУВАТИСЯ")} 
                                 type="submit" 
-                                disabled={isLoading}
+                                disabled={isLoading || !isFormValid}
                                 icon={isLoading ? "spinner" : undefined}
                             />
                             <button 
@@ -96,6 +117,9 @@ export default function Auth() {
                                 onClick={() => {
                                     setIsLoginView(!isLoginView);
                                     setError(null);
+                                    setName("");
+                                    setEmail("");
+                                    setPassword("");
                                 }}
                                 disabled={isLoading}
                             >
