@@ -78,6 +78,11 @@
     font-weight: 500;
 }
 
+.profile-stats-row {
+    display: flex;
+    gap: 12px;
+}
+
 /* --- Rating Card --- */
 .rating-card {
     display: flex;
@@ -88,12 +93,123 @@
     background: #f2f2f7;
     border-radius: 20px;
     min-width: 80px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.rating-card.active {
+    background: #fff;
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.1);
+}
+
+.rating-card.active .rating-row {
+    color: var(--primary);
 }
 
 .rating-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: 20px;
     font-weight: 800;
     color: var(--text-main);
+}
+/* ... existing styles ... */
+.profile-tabs-content {
+    margin-top: 8px;
+}
+
+.tab-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 4px;
+}
+
+.profile-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.profile-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
+    background: #f9f9fb;
+    border: 1px solid #f2f2f7;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.profile-card:hover {
+    background: #fff;
+    border-color: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.profile-card img {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.card-info {
+    flex: 1;
+}
+
+.card-info h4 {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 2px 0;
+    color: var(--text-main);
+}
+
+.card-info p {
+    font-size: 13px;
+    color: #8e8e93;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+}
+
+.visit-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.group-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #8e8e93;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.empty-tab-text {
+    color: #8e8e93;
+    font-size: 15px;
+    text-align: center;
+    padding: 40px 0;
 }
 
 .reviews-count {

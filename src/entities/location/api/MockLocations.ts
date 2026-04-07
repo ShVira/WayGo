@@ -1,3 +1,5 @@
+export type VisitStatus = 'liked' | 'disliked' | null;
+
 export interface Location {
   id: string | number;
   name: string;
@@ -13,6 +15,8 @@ export interface Location {
   hours: string;
   weekdayText?: string[];
   googlePlaceId?: string;
+  visitStatus?: VisitStatus;
+  isSaved?: boolean;
 }
 
 export const MOCK_LOCATIONS: Location[] = [

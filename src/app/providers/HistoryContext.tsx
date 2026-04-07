@@ -5,6 +5,7 @@ interface HistoryLocation {
     name: string;
     imageUrl: string;
     address: string;
+    visitStatus?: 'liked' | 'disliked' | null;
 }
 
 interface HistoryContextType {

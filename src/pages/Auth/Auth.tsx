@@ -90,7 +90,7 @@ export default function Auth() {
                                 disabled={isLoading}
                                 icon={isLoading ? "spinner" : undefined}
                             />
-                            <button 
+                            <SiteButton 
                                 type="button" 
                                 className="toggle-btn" 
                                 onClick={() => {
@@ -98,9 +98,8 @@ export default function Auth() {
                                     setError(null);
                                 }}
                                 disabled={isLoading}
-                            >
-                                {isLoginView ? "Немає акаунту? Реєстрація" : "Вже є акаунт? Увійти"}
-                            </button>
+                                text={isLoginView ? "Немає акаунту? Реєстрація" : "Вже є акаунт? Увійти"}
+                            />
                         </div>
                     </form>
                 </div>

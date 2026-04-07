@@ -1,5 +1,5 @@
 import React from 'react';
-import { Coffee, Compass, Zap, Activity, Users, Leaf, Sparkles } from 'lucide-react';
+import { Coffee, Compass, Zap, Activity, Users, Leaf, Sparkles, Frown } from 'lucide-react';
 import './ui/CategorySelector.css';
 
 const VIBES = [
@@ -10,6 +10,7 @@ const VIBES = [
   { id: 'social', label: 'Social', icon: <Users size={24} color="#7b1fa2" /> },
   { id: 'nature', label: 'Nature', icon: <Leaf size={24} color="#388e3c" /> },
   { id: 'special', label: 'Special', icon: <Sparkles size={24} color="#f57c00" /> },
+  { id: 'depressive', label: 'Depressive', icon: <Frown size={24} color="#616161" /> },
 ];
 
 interface CategorySelectorProps {

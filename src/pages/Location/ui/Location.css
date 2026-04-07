@@ -94,10 +94,135 @@
   transition: var(--transition-smooth);
 }
 
-.bookmark-btn-alt.is-liked {
-  background: var(--primary);
-  color: white;
+.image-action-btn.visit-btn.active {
+  background: white;
+  color: #4caf50;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
 }
+
+.image-action-btn.bookmark-btn.is-active {
+  background: white;
+  color: #4caf50;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+/* Visit Modal Styles */
+.visit-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+  padding: 20px;
+}
+
+.visit-modal {
+  background: white;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 32px;
+  padding: 32px;
+  position: relative;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+
+.close-modal {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: #f2f2f7;
+  border: none;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.visit-modal h2 {
+  font-size: 24px;
+  font-weight: 850;
+  margin-bottom: 8px;
+  color: var(--text-main);
+}
+
+.visit-modal p {
+  color: var(--text-muted);
+  font-size: 15px;
+  margin-bottom: 24px;
+}
+
+.visit-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.visit-opt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  border-radius: 24px;
+  border: 2px solid #f2f2f7;
+  background: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.visit-opt span {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.visit-opt.like { color: #8e8e93; }
+.visit-opt.like.active {
+  border-color: #4caf50;
+  color: #4caf50;
+  background: rgba(76, 175, 80, 0.05);
+}
+
+.visit-opt.dislike { color: #8e8e93; }
+.visit-opt.dislike.active {
+  border-color: #f44336;
+  color: #f44336;
+  background: rgba(244, 67, 54, 0.05);
+}
+
+.modal-divider {
+  height: 1px;
+  background: #f2f2f7;
+  margin: 0 -32px 24px -32px;
+}
+
+.add-review-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.add-review-btn:hover {
+  text-decoration: underline;
+}
+
+.w-full { width: 100%; }
+.mt-4 { margin-top: 16px; }
 
 .location-content-wrapper {
   padding: 30px 24px;

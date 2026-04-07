@@ -32,13 +32,13 @@ function AppRoutes() {
       <Route path="/history" element={<History />} />
       <Route path="/profile" element={user ? <Profile /> : <Auth />} />
       <Route path="/auth" element={user ? <Profile /> : <Auth />} />
-      <Route path="*" element={<div>Сторінку не знайдено (404)</div>} />
+      <Route path="*" element={<div>Сторінку не  (404)</div>} />
     </Routes>
   );
 }
 
 export default function App() {
-  const basename = import.meta.env.DEV ? "/" : "/WayGo";
+  const basename = "/WayGo/";
 
   return (
     <AppProvider>

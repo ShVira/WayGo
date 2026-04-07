@@ -45,6 +45,7 @@ const mapVibeToGoogleType = (vibe: string): string | undefined => {
     case 'Social': return 'restaurant';
     case 'Nature': return 'park';
     case 'Special': return 'museum';
+    case 'Depressive': return 'cemetery';
     default: return undefined;
   }
 };
@@ -81,6 +82,7 @@ const getIconForVibes = (vibes: string[]): string => {
   if (vibes.includes('Active')) return '🏃';
   if (vibes.includes('Explore')) return '🧭';
   if (vibes.includes('Special')) return '✨';
+  if (vibes.includes('Depressive')) return '☹️';
   return '📍';
 };
 
@@ -107,6 +109,8 @@ const TYPE_MAPPING: Record<string, string[]> = {
   cinema: ['Social'],
   bowling_alley: ['Social'],
   amusement_park: ['Special'],
+  cemetery: ['Depressive'],
+  funeral_home: ['Depressive'],
 };
 
 const getVibesFromTypes = (types: string[]): string[] => {
