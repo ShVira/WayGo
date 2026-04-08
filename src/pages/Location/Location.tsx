@@ -273,7 +273,7 @@ const LocationPage = () => {
                 <span>{location.rating}</span>
               </div>
               <a href={location.reviewUrl} target="_blank" rel="noopener noreferrer" className="reviews-link">
-                Відгуки
+                {location.userRatingsTotal || 0} відгуків
               </a>
             </div>
           </header>
@@ -303,8 +303,8 @@ const LocationPage = () => {
               <div className="info-card__content">
                 <span className="info-card__label">Робочі години</span>
                 <span className={`info-card__value ${
-                  location.hours.toLowerCase().includes('open') ? 'status-open' : 
-                  location.hours.toLowerCase().includes('closed') ? 'status-closed' : ''
+                  location.hours === 'Відчинено' ? 'status-open' : 
+                  location.hours === 'Зачинено' ? 'status-closed' : ''
                 }`}>
                   {location.hours}
                 </span>

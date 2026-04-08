@@ -275,6 +275,23 @@
     gap: 16px;
 }
 
+.edit-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.edit-input.input-error {
+    border-color: #ff3b30;
+}
+
+.error-message {
+    color: #ff3b30;
+    font-size: 12px;
+    font-weight: 500;
+}
+
 .edit-input {
     width: 100%;
     border: 2px solid var(--primary);

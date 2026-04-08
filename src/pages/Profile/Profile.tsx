@@ -39,13 +39,28 @@ export default function Profile() {
     };
 
     const handleSave = async () => {
-        if (!auth.currentUser) return;
+        if (!auth.currentUser || !user) return;
         
+        // Alphanumeric validation (letters and numbers only)
+        const alphanumericRegex = /^[a-zA-Z0-9а-яА-ЯіІєЄїЇґҐ\s]+$/;
+        if (!alphanumericRegex.test(editName)) {
+            setNameError('Нікнейм може містити лише літери та цифри');
+            return;
+        }
+        
+        setNameError(null);
         setIsSaving(true);
         try {
             await updateProfile(auth.currentUser, {
                 displayName: editName
             });
+
+            // Update global state immediately for reactive UI
+            setUser({
+                ...user,
+                name: editName
+            });
+
             setIsEditing(false);
         } catch (error: any) {
             console.error("Error updating profile:", error);
@@ -59,6 +74,7 @@ export default function Profile() {
         if (user) {
             setEditName(user.name || "");
         }
+        setNameError(null);
         setIsEditing(false);
     };
 
@@ -72,13 +88,20 @@ export default function Profile() {
                         <div className="title-section">
                             <div className="title-row">
                                 {isEditing ? (
-                                    <input 
-                                        className="edit-input title-input" 
-                                        value={editName} 
-                                        onChange={(e) => setEditName(e.target.value)} 
-                                        autoFocus
-                                        disabled={isSaving}
-                                    />
+                                    <div className="edit-container">
+                                        <input 
+                                            className={`edit-input title-input ${nameError ? 'input-error' : ''}`} 
+                                            value={editName} 
+                                            onChange={(e) => {
+                                                setEditName(e.target.value);
+                                                if (nameError) setNameError(null);
+                                            }} 
+                                            maxLength={20}
+                                            autoFocus
+                                            disabled={isSaving}
+                                        />
+                                        {nameError && <span className="error-message">{nameError}</span>}
+                                    </div>
                                 ) : (
                                     <h1 className="location-title">{user.name}</h1>
                                 )}
