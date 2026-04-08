@@ -11,6 +11,7 @@ import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import { Layout } from '../../features/layout/Layout';
 import { CategorySelector } from '../../features/category-selector/CategorySelector';
 import { ShuffleButton } from '../../features/shuffle/ShuffleButton';
+import SiteButton from '../../features/SiteButton/SiteButton';
 import { MOCK_LOCATIONS, Location } from '../../entities/location/api/MockLocations';
 import { fetchNearbyLocations } from '../../entities/location/api/GooglePlacesService';
 import { LocationPopup } from './ui/LocationPopup';
@@ -274,8 +275,8 @@ const Home: React.FC = () => {
               <h2>Дозволити геолокацію?</h2>
               <p>Ми покажемо цікаві місця поруч із вашим поточним місцезнаходженням.</p>
               <div className="location-modal__actions">
-                <button className="btn-allow" onClick={() => { sessionStorage.setItem('waygo-location-asked', 'true'); setShowLocationModal(false); requestCurrentLocation(); }}>ДОЗВОЛИТИ</button>
-                <button className="btn-deny" onClick={() => { sessionStorage.setItem('waygo-location-asked', 'true'); setShowLocationModal(false); }}>ПІЗНІШЕ</button>
+                <SiteButton text="ДОЗВОЛИТИ" onClick={() => { sessionStorage.setItem('waygo-location-asked', 'true'); setShowLocationModal(false); requestCurrentLocation(); }} />
+                <SiteButton text="ПІЗНІШЕ" onClick={() => { sessionStorage.setItem('waygo-location-asked', 'true'); setShowLocationModal(false); }} className="btn-deny" />
               </div>
             </div>
           </div>
@@ -288,7 +289,7 @@ const Home: React.FC = () => {
               <h2>Ви за межами України</h2>
               <p>Пошук локацій за вашим місцезнаходженням ще в розробці. Спробуйте обрати щось в Україні.</p>
               <div className="location-modal__actions">
-                <button className="btn-allow" onClick={() => setShowOutsideUkraineModal(false)}>ЗРОЗУМІЛО</button>
+                <SiteButton text="ЗРОЗУМІЛО" onClick={() => setShowOutsideUkraineModal(false)} />
               </div>
             </div>
           </div>
@@ -316,7 +317,7 @@ const Home: React.FC = () => {
             <div className="geo-error-notice">
               <Info size={16} />
               <span>{searchError}</span>
-              <button onClick={() => setSearchError(null)}>&times;</button>
+              <SiteButton onClick={() => setSearchError(null)} text="&times;" className="error-close-btn" />
             </div>
           )}
         </section>
@@ -366,9 +367,12 @@ const Home: React.FC = () => {
             )}
           </MapContainer>
           
-          <button className="locate-me-btn" onClick={requestCurrentLocation} title="Знайти мене">
-            <Navigation size={20} fill="currentColor" />
-          </button>
+          <SiteButton 
+            className="locate-me-btn" 
+            onClick={requestCurrentLocation} 
+            title="Знайти мене"
+            icon={<Navigation size={20} fill="currentColor" />}
+          />
           
           <div className="shuffle-container">
             {!isMapInUkraine && (

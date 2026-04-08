@@ -18,10 +18,8 @@ function AppRoutes() {
 
   if (isBusy) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'white' }}>
-        <div className="spinner-border text-success" role="status">
-          <span className="visually-hidden">Завантаження...</span>
-        </div>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'white', color: '#4caf50', fontWeight: 'bold' }}>
+        <div>Завантаження...</div>
       </div>
     );
   }
@@ -34,14 +32,17 @@ function AppRoutes() {
       <Route path="/history" element={<History />} />
       <Route path="/profile" element={user ? <Profile /> : <Auth />} />
       <Route path="/auth" element={user ? <Profile /> : <Auth />} />
+      <Route path="*" element={<div>Сторінку не  (404)</div>} />
     </Routes>
   );
 }
 
 export default function App() {
+  const basename = "/WayGo/";
+
   return (
     <AppProvider>
-      <BrowserRouter basename="/WayGo">
+      <BrowserRouter basename={basename}>
         <SavedProvider>
           <HistoryProvider>
             <AppRoutes />

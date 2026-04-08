@@ -111,7 +111,7 @@ export default function Auth() {
                                 disabled={isLoading || !isFormValid}
                                 icon={isLoading ? "spinner" : undefined}
                             />
-                            <button 
+                            <SiteButton 
                                 type="button" 
                                 className="toggle-btn" 
                                 onClick={() => {
@@ -122,9 +122,8 @@ export default function Auth() {
                                     setPassword("");
                                 }}
                                 disabled={isLoading}
-                            >
-                                {isLoginView ? "Немає акаунту? Реєстрація" : "Вже є акаунт? Увійти"}
-                            </button>
+                                text={isLoginView ? "Немає акаунту? Реєстрація" : "Вже є акаунт? Увійти"}
+                            />
                         </div>
                     </form>
                 </div>
