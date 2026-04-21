@@ -11,6 +11,11 @@ import Profile from "../pages/Profile/Profile";
 import History from "../pages/History/History";
 import Auth from "../pages/Auth/Auth";
 
+// Import Error Pages
+import NotFoundPage from "../pages/Error/NotFound";
+import ForbiddenPage from "../pages/Error/Forbidden";
+import ServerErrorPage from "../pages/Error/ServerError";
+
 import { AppContext, AppProvider } from "../features/app-context/AppContext";
 
 function AppRoutes() {
@@ -32,7 +37,11 @@ function AppRoutes() {
       <Route path="/history" element={<History />} />
       <Route path="/profile" element={user ? <Profile /> : <Auth />} />
       <Route path="/auth" element={user ? <Profile /> : <Auth />} />
-      <Route path="*" element={<div>Сторінку не  (404)</div>} />
+      
+      {/* Error Routes */}
+      <Route path="/403" element={<ForbiddenPage />} />
+      <Route path="/500" element={<ServerErrorPage />} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }
