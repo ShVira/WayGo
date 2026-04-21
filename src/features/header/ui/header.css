@@ -1,7 +1,7 @@
 .header {
   padding: clamp(24px, 5vw, 32px) var(--spacing-sm); /* Increased padding for more space */
-  background-color: var(--white);
-  border-bottom: 1px solid #edf2ed;
+  background-color: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -33,7 +33,7 @@
   display: block;
   font-size: var(--fs-body);
   font-weight: 600;
-  color: var(--text-main);
+  color: var(--text-primary);
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;

@@ -23,13 +23,13 @@
     font-size: var(--fs-h1);
     font-weight: 850;
     font-style: italic;
-    color: #1a1a1a;
+    color: var(--text-primary);
     letter-spacing: -0.5px;
     margin-bottom: 8px;
 }
 
 .saved-subtitle {
-    color: #8e8e93;
+    color: var(--text-muted);
     font-size: 15px;
     font-weight: 500;
 }
@@ -58,7 +58,7 @@
 .saved-card {
     display: flex;
     align-items: center;
-    background: #ffffff;
+    background-color: var(--bg-card);
     border-radius: 20px;
     padding: 16px;
     gap: 16px;
@@ -99,7 +99,7 @@
     font-size: 17px;
     font-weight: 700;
     margin: 0;
-    color: #1c1c1e;
+    color: var(--text-primary);
 }
 
 .saved-card-rating {
@@ -110,7 +110,7 @@
 
 .saved-card-details p {
     font-size: 13px;
-    color: #8e8e93;
+    color: var(--text-muted);
     margin: 0;
     display: flex;
     align-items: center;
@@ -126,7 +126,7 @@
 
 .mini-tag {
     background: #f2f2f7;
-    color: #8e8e93;
+    color: var(--text-muted);
     padding: 2px 6px;
     border-radius: 6px;
     font-size: 10px;
@@ -184,12 +184,12 @@
 .empty-state__title {
     font-size: 20px;
     font-weight: 800;
-    color: #1a1a1a;
+    color: var(--text-primary);
     margin-bottom: 8px;
 }
 
 .empty-state__text {
-    color: #8e8e93;
+    color: var(--text-muted);
     font-size: 15px;
     max-width: 240px;
     line-height: 1.4;
