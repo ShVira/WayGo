@@ -5,9 +5,9 @@
   transform: translateX(-50%);
   width: 100%;
   max-width: 1440px; 
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: var(--bg-card);
   backdrop-filter: blur(12px);
-  border-top: 1px solid #edf2ed;
+  border-top: 1px solid var(--border-color);
   z-index: 1000;
   padding-bottom: env(safe-area-inset-bottom);
 }

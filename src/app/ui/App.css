@@ -1,3 +1,6 @@
+
+/* Світла тема (за замовчуванням) */
+
 :root {
   --primary: #4caf50;
   --primary-dark: #2e7d32;
@@ -6,6 +9,11 @@
   --text-muted: #8e8e93;
   --white: #ffffff;
   
+  --bg-main: #f5f7f5;
+  --bg-card: #ffffff;
+  --text-primary: #1a1a1a;
+  --border-color: #efeff4;
+
   --border-radius-lg: 24px;
   --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -19,8 +27,19 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  background-color: #f5f7f5;
+  background-color: var(--bg-main);
   font-family: 'Inter', sans-serif;
-  color: var(--text-main);
+  color: var(--text-primary);
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+
+/* Темна тема */
+.dark {
+  --bg-main: #121212;      /* Темний загальний фон */
+  --bg-card: #1e1e1e;      /* Трохи світліший фон для карток */
+  --text-primary: #ffffff; /* Білий текст */
+  --text-muted: #9ca3af;   /* Світло-сірий текст */
+  --border-color: #374151; /* Темні бордери */
 }
