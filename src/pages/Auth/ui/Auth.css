@@ -6,11 +6,11 @@
     justify-content: center;
     align-items: center;
     min-height: 85vh;
-    background-color: #f8f9fa;
+    background-color: var(--bg-main);
 }
 
 .auth-card {
-    background: white;
+    background-color: var(--bg-card);
     padding: 40px 30px;
     border-radius: 32px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
@@ -33,7 +33,7 @@
 
 .waygo-tagline {
     font-size: 13px;
-    color: #8e8e93;
+    color: var(--text-muted);
     font-style: italic;
 }
 
@@ -41,7 +41,7 @@
     font-size: 24px;
     font-weight: 800;
     font-style: italic;
-    color: #1a1a1a;
+    color: var(--text-primary);
     margin-bottom: 32px;
 }
 
@@ -96,7 +96,7 @@
 }
 
 .input-group input:focus {
-    background: white;
+    background-color: var(--bg-card);
     border-color: #4CAF50;
     box-shadow: 0 0 0 4px rgba(74, 175, 80, 0.1);
 }

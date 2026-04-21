@@ -1,5 +1,5 @@
 .location-page {
-  background: var(--white);
+  background-color: var(--bg-main);
   padding-bottom: 120px;
 }
 
@@ -57,7 +57,7 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
+  background-color: var(--bg-card);
   backdrop-filter: blur(8px);
   border: none;
   display: flex;
@@ -66,7 +66,7 @@
   cursor: pointer;
   z-index: 10;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  color: var(--text-main);
+  color: var(--text-primary);
 }
 
 .image-actions {
@@ -82,7 +82,7 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
+  background-color: var(--bg-card);
   backdrop-filter: blur(8px);
   border: none;
   display: flex;
@@ -90,18 +90,18 @@
   justify-content: center;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  color: var(--text-main);
+  color: var(--text-primary);
   transition: var(--transition-smooth);
 }
 
 .image-action-btn.visit-btn.active {
-  background: white;
+  background-color: var(--bg-card);
   color: #4caf50;
   box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
 }
 
 .image-action-btn.bookmark-btn.is-active {
-  background: white;
+  background-color: var(--bg-card);
   color: #4caf50;
   box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
 }
@@ -123,7 +123,7 @@
 }
 
 .visit-modal {
-  background: white;
+  background-color: var(--bg-card);
   width: 100%;
   max-width: 400px;
   border-radius: 32px;
@@ -137,7 +137,7 @@
   position: absolute;
   top: 20px;
   right: 20px;
-  background: #f2f2f7;
+  background-color: var(--bg-card);
   border: none;
   height: 32px;
   border-radius: 50%;
@@ -145,13 +145,14 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  color: var(--text-primary);
 }
 
 .visit-modal h2 {
   font-size: 24px;
   font-weight: 850;
   margin-bottom: 8px;
-  color: var(--text-main);
+  color: var(--text-primary);
 }
 
 .visit-modal p {
@@ -174,7 +175,7 @@
   gap: 12px;
   padding: 20px;
   border-radius: 24px;
-  border: 2px solid #f2f2f7;
+  border: 2px solid var(--border-color);
   background: none;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -185,23 +186,23 @@
   font-weight: 700;
 }
 
-.visit-opt.like { color: #8e8e93; }
+.visit-opt.like { color: var(--text-muted); }
 .visit-opt.like.active {
   border-color: #4caf50;
   color: #4caf50;
-  background: rgba(76, 175, 80, 0.05);
+  background-color: rgba(76, 175, 80, 0.05);
 }
 
-.visit-opt.dislike { color: #8e8e93; }
+.visit-opt.dislike { color: var(--text-muted); }
 .visit-opt.dislike.active {
   border-color: #f44336;
   color: #f44336;
-  background: rgba(244, 67, 54, 0.05);
+  background-color: rgba(244, 67, 54, 0.05);
 }
 
 .modal-divider {
   height: 1px;
-  background: #f2f2f7;
+  background-color: var(--border-color);
   margin: 0 -32px 24px -32px;
 }
 
@@ -253,7 +254,7 @@
   font-weight: 850;
   margin: 0;
   line-height: 1.1;
-  color: var(--text-main);
+  color: var(--text-primary);
   font-style: italic;
 }
 
@@ -272,7 +273,8 @@
   align-items: center;
   gap: 4px;
   padding: 12px 20px;
-  background: #f2f2f7;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 20px;
 }
 
@@ -282,7 +284,7 @@
   gap: 6px;
   font-size: 20px;
   font-weight: 800;
-  color: var(--text-main);
+  color: var(--text-primary);
 }
 
 .reviews-link {
@@ -303,13 +305,13 @@
   font-size: 18px;
   font-weight: 800;
   margin-bottom: 12px;
-  color: var(--text-main);
+  color: var(--text-primary);
 }
 
 .location-description {
   font-size: 15px;
   line-height: 1.6;
-  color: #484848;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -330,15 +332,15 @@
   align-items: flex-start;
   gap: 16px;
   padding: 20px;
-  background: #f9f9fb;
-  border: 1px solid #f0f0f3;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 24px;
 }
 
 .info-card__icon {
   width: 44px;
   height: 44px;
-  background: #fff;
+  background-color: var(--bg-card);
   border-radius: 14px;
   display: flex;
   align-items: center;
@@ -364,7 +366,7 @@
 .info-card__value {
   font-size: 15px;
   font-weight: 600;
-  color: var(--text-main);
+  color: var(--text-primary);
 }
 
 .status-open {
@@ -415,12 +417,13 @@
 }
 
 .btn-secondary {
-  background: #f2f2f7;
-  color: var(--text-main);
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
 }
 
 .btn-secondary:hover {
-  background: #e5e5ea;
+  background-color: var(--bg-main);
 }
 
 /* --- Skeleton --- */
