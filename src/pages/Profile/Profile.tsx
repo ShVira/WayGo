@@ -10,12 +10,13 @@ import { Pencil, X, Mail, Calendar, MapPin, Bookmark, CheckCircle2, ThumbsUp, Th
 import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
-    const { user } = useContext(AppContext);
+    const { user, setUser } = useContext(AppContext);
     const { savedLocations, visitedLocations } = useSaved();
     const navigate = useNavigate();
     
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
+    const [nameError, setNameError] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<'saved' | 'visited'>('saved');
     
     const [editName, setEditName] = useState(user?.name || "");
