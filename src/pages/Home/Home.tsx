@@ -10,6 +10,7 @@ import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
 import { Layout } from '../../features/layout/Layout';
 import { CategorySelector } from '../../features/category-selector/CategorySelector';
+import { AiMoodSearch } from '../../components/AiMoodSearch';
 import { ShuffleButton } from '../../features/shuffle/ShuffleButton';
 import SiteButton from '../../features/SiteButton/SiteButton';
 import { MOCK_LOCATIONS, Location } from '../../entities/location/api/MockLocations';
@@ -265,6 +266,13 @@ const Home: React.FC = () => {
 
   const isMapInUkraine = isInsideUkraine(visualCenter[0], visualCenter[1]);
 
+  const handleAiTagsFound = (tags: string[]) => {
+    if (tags.length > 0) {
+      setSelectedVibe(tags[0]);
+      setLocations([]);
+    }
+  };
+
   return (
     <Layout>
       <div className="home-page">
@@ -296,6 +304,7 @@ const Home: React.FC = () => {
         )}
 
         <section className="home-page__vibe-section">
+          <AiMoodSearch onTagsFound={handleAiTagsFound} />
           <CategorySelector selectedVibe={selectedVibe} onVibeChange={(v) => { setSelectedVibe(v); setLocations([]); }} />
         </section>
 
