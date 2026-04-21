@@ -32,17 +32,15 @@ function AppRoutes() {
       <Route path="/history" element={<History />} />
       <Route path="/profile" element={user ? <Profile /> : <Auth />} />
       <Route path="/auth" element={user ? <Profile /> : <Auth />} />
-      <Route path="*" element={<div>Сторінку не  (404)</div>} />
+      <Route path="*" element={<div>Сторінку не знайдено (404)</div>} />
     </Routes>
   );
 }
 
 export default function App() {
-  const basename = "/WayGo/";
-
   return (
     <AppProvider>
-      <BrowserRouter basename={basename}>
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         <SavedProvider>
           <HistoryProvider>
             <AppRoutes />
