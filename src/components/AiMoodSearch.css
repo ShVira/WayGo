@@ -1,0 +1,135 @@
+
+.ai-mood-container {
+  width: 100%;
+  background-color: var(--bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 16px;
+}
+
+.ai-mood-container.is-open {
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary);
+}
+
+.ai-mood-trigger {
+  width: 100%;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 700;
+  transition: background-color 0.2s;
+  background: linear-gradient(90deg, transparent, rgba(76, 175, 80, 0.05), transparent);
+}
+
+.ai-mood-trigger:hover {
+  background-color: var(--primary-light);
+}
+
+.ai-mood-icon {
+  color: var(--primary);
+  filter: drop-shadow(0 0 4px rgba(76, 175, 80, 0.3));
+}
+
+/* Складна панель через grid для плавної анімації висоти */
+.ai-mood-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.is-open .ai-mood-panel {
+  grid-template-rows: 1fr;
+}
+
+.ai-mood-inner {
+  overflow: hidden;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.is-open .ai-mood-inner {
+  padding: 8px 16px 16px 16px;
+}
+
+.ai-mood-textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 14px;
+  background-color: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 14px;
+  resize: none;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.ai-mood-textarea:focus {
+  border-color: var(--primary);
+}
+
+.ai-mood-submit {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ai-mood-submit:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.ai-mood-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ai-mood-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ff3b30;
+  font-size: 13px;
+  background-color: rgba(255, 59, 48, 0.05);
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.ai-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Темна тема адаптація */
+.dark .ai-mood-trigger {
+  background: linear-gradient(90deg, transparent, rgba(76, 175, 80, 0.1), transparent);
+}
