@@ -17,6 +17,7 @@ import ForbiddenPage from "../pages/Error/Forbidden";
 import ServerErrorPage from "../pages/Error/ServerError";
 
 import { AppContext, AppProvider } from "../features/app-context/AppContext";
+import { ThemeProvider } from "./providers/ThemeContext";
 
 function AppRoutes() {
   const { user, isBusy } = useContext(AppContext);
@@ -50,14 +51,16 @@ export default function App() {
   const basename = "/WayGo/";
 
   return (
-    <AppProvider>
-      <BrowserRouter basename={basename}>
-        <SavedProvider>
-          <HistoryProvider>
-            <AppRoutes />
-          </HistoryProvider>
-        </SavedProvider>
-      </BrowserRouter>
-    </AppProvider>
+    <ThemeProvider>
+      <AppProvider>
+        <BrowserRouter basename={basename}>
+          <SavedProvider>
+            <HistoryProvider>
+              <AppRoutes />
+            </HistoryProvider>
+          </SavedProvider>
+        </BrowserRouter>
+      </AppProvider>
+    </ThemeProvider>
   );
 }

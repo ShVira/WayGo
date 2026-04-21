@@ -5,6 +5,8 @@
     padding-bottom: 120px;
     width: 100%;
     box-sizing: border-box;
+    background-color: var(--bg-primary);
+    transition: background-color 0.3s ease;
 }
 
 @media (min-width: 1024px) {
@@ -23,13 +25,13 @@
     font-size: var(--fs-h1);
     font-weight: 850;
     font-style: italic;
-    color: #1a1a1a;
+    color: var(--text-main);
     letter-spacing: -0.5px;
     margin-bottom: 8px;
 }
 
 .history-subtitle {
-    color: #8e8e93;
+    color: var(--text-muted);
     font-size: 15px;
     font-weight: 500;
 }
@@ -57,26 +59,21 @@
 .history-card {
     display: flex;
     align-items: center;
-    background: #ffffff;
+    background: var(--bg-secondary);
     border-radius: 20px;
     padding: 16px;
     gap: 16px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    box-shadow: var(--shadow-sm);
     cursor: pointer;
     transition: var(--transition-smooth);
-    border: 1px solid #f2f2f7;
+    border: 1px solid var(--border-color);
 }
 
 .history-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
-    border-color: var(--primary-light);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary);
 }
-
-.history-card:active {
-    transform: scale(0.98);
-}
-
 
 .history-card-img {
     width: 70px;
@@ -89,25 +86,17 @@
     flex: 1;
 }
 
-.history-card-title-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 2px;
-}
-
 .history-card-info h3 {
     font-size: 17px;
     font-weight: 700;
     margin: 0;
-    color: #1c1c1e;
+    color: var(--text-main);
     flex: 1;
 }
 
 .history-card-info p {
     font-size: 13px;
-    color: #8e8e93;
+    color: var(--text-muted);
     margin: 0;
     display: flex;
     align-items: center;
@@ -116,7 +105,7 @@
 }
 
 .history-chevron {
-    color: #c7c7cc;
+    color: var(--text-muted);
 }
 
 /* Empty State */
@@ -133,32 +122,27 @@
 .empty-icon-circle {
     width: 80px;
     height: 80px;
-    background: #f2f2f7;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #2e7d32;
+    color: var(--primary);
     margin-bottom: 24px;
 }
 
 .empty-history h3 {
     font-size: 20px;
     font-weight: 800;
-    color: #1a1a1a;
+    color: var(--text-main);
     margin-bottom: 8px;
 }
 
 .empty-history p {
-    color: #8e8e93;
+    color: var(--text-muted);
     font-size: 15px;
     max-width: 220px;
     line-height: 1.4;
     margin: 0 auto;
-}
-
-.action-footer {
-    display: flex;
-    justify-content: center;
-    width: 100%;
 }

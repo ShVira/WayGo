@@ -5,7 +5,7 @@
   gap: 10px;
   
   /* Ecological Green Theme */
-  background-color: #2e7d32; 
+  background-color: var(--primary-dark); 
   color: #ffffff;
   
   /* Pill Shape & Spacing */
@@ -22,15 +22,15 @@
   
   /* Effects */
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   outline: none;
 }
 
 .site-button:hover {
-  background-color: #388e3c;
+  background-color: var(--primary);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
 .site-button:active {
@@ -43,6 +43,7 @@
 
 .site-button--disabled {
   opacity: 0.7;
+  background-color: var(--text-muted) !important;
   cursor: not-allowed !important;
   transform: none !important;
   box-shadow: none !important;

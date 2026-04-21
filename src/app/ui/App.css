@@ -1,26 +1,62 @@
 :root {
+  /* Brand Colors */
   --primary: #4caf50;
   --primary-dark: #2e7d32;
   --primary-light: #f1f8f1;
+  
+  /* Light Theme Variables */
+  --bg-primary: #f5f7f5;
+  --bg-secondary: #ffffff;
   --text-main: #1a1a1a;
   --text-muted: #8e8e93;
-  --white: #ffffff;
-  
-  --border-radius-lg: 24px;
+  --border-color: #edf2ed;
   --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
+  
+  /* Shared Variables */
+  --border-radius-lg: 24px;
+  --border-radius-md: 16px;
   --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* Fluid Typography - Balanced */
+  /* Fluid Typography */
   --fs-h1: clamp(1.75rem, 3vw + 1rem, 2.5rem);
   --fs-body: clamp(0.9375rem, 0.5vw + 0.8rem, 1.0625rem);
+  --fs-small: 0.875rem;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+.dark {
+  /* Dark Theme Variables */
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --text-main: #ffffff;
+  --text-muted: #a0a0a0;
+  --border-color: #333333;
+  --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.5);
+  
+  /* Adjusted Brand for Dark Mode */
+  --primary-light: #1b2e1b;
+}
+
+* { 
+  box-sizing: border-box; 
+  margin: 0; 
+  padding: 0; 
+}
 
 body {
-  background-color: #f5f7f5;
+  background-color: var(--bg-primary);
   font-family: 'Inter', sans-serif;
   color: var(--text-main);
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Base styles to use variables by default */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-main);
+}
+
+p, span {
+  color: var(--text-main);
 }
