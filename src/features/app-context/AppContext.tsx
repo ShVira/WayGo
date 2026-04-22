@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { UserType } from '../../entities/user/model/UserType';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../app/api/firebase';
+import UserDao from '../../entities/user/api/UserDao';
 
 interface AppContextType {
     user: UserType | null;
@@ -17,14 +18,28 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     const [isBusy, setBusy] = useState<boolean>(true);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
-                setUser({
-                    id: firebaseUser.uid,
-                    name: firebaseUser.displayName || 'Користувач',
-                    email: firebaseUser.email || '',
-                    imageUrl: firebaseUser.photoURL || undefined
-                } as UserType);
+                try {
+                    const firestoreUser = await UserDao.getUser(firebaseUser.uid);
+                    if (firestoreUser) {
+                        setUser(firestoreUser);
+                    } else {
+                        // Minimal fallback if Firestore document is not found (e.g., legacy users or right after registration)
+                        setUser({
+                            uid: firebaseUser.uid,
+                            fullName: firebaseUser.displayName || 'Користувач',
+                            email: firebaseUser.email || '',
+                            username: '',
+                            dateOfBirth: '',
+                            city: '',
+                            phoneNumber: '',
+                            bio: ''
+                        } as UserType);
+                    }
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
+                }
             } else {
                 setUser(null);
             }

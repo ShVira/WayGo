@@ -2,11 +2,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Layout } from '../../features/layout/Layout';
 import { MOCK_LOCATIONS, Location } from '../../entities/location/api/MockLocations';
 import { fetchLocationDetails } from '../../entities/location/api/GooglePlacesService';
-import './ui/Location.css';
 import { useState, useEffect } from 'react';
 import { useSaved } from '../../app/providers/SavedContext';
 import { useHistory } from '../../app/providers/HistoryContext'; 
 import { calculateDistance, formatDistance } from '../../shared/utils/distance';
+import './ui/Location.css';
+
 import { 
   ChevronLeft, 
   MapPin, 
@@ -84,7 +85,7 @@ const LocationPage = () => {
   const [userCoords, setUserCoords] = useState<[number, number] | null>(null);
   const [isLocating, setIsLocating] = useState(true);
   
-  const { savedLocations, visitedLocations, toggleSave, toggleVisit } = useSaved();
+  const { savedLocations, visitedLocations, toggleSave, toggleVisit, setMessage } = useSaved();
   const { addToHistory } = useHistory();
 
   // Fetch User Location
@@ -185,6 +186,19 @@ const LocationPage = () => {
     toggleVisit(location, newStatus);
   };
 
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: location.name,
+        text: location.description,
+        url: window.location.href,
+      }).catch(console.error);
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      setMessage({ text: 'Посилання скопійовано', type: 'info' });
+    }
+  };
+
   const getDynamicDistance = () => {
     if (isLocating) return 'Визначаємо...';
     if (!userCoords) return location.distance; // Fallback to mock distance
@@ -232,7 +246,7 @@ const LocationPage = () => {
           />
           
           <div className="image-actions">
-            <button className="image-action-btn" onClick={() => alert('Поділитися локацією')}>
+            <button className="image-action-btn" onClick={handleShare}>
               <Share2 size={20} />
             </button>
             <button

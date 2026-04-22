@@ -54,11 +54,7 @@ function AppRoutes() {
       <Route path="/history" element={<History />} />
       <Route path="/profile" element={user ? <Profile /> : <Auth />} />
       <Route path="/auth" element={user ? <Profile /> : <Auth />} />
-      
-      {/* Error Routes */}
-      <Route path="/403" element={<ForbiddenPage />} />
-      <Route path="/500" element={<ServerErrorPage />} />
-      <Route path="*" element={<NotFoundPage />} />
+      <Route path="*" element={<div>Сторінку не  (404)</div>} />
     </Routes>
   );
 }

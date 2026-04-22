@@ -1,9 +1,12 @@
 export interface UserType {
-    id: string;
-    login?: string;
-    name: string;
+    uid: string;
+    fullName: string;
     email: string;
-    imageUrl?: string;
-    address?: string;
-    dob?: string;
+    username: string;
+    dateOfBirth: string;
+    city: string;
+    bio?: string;
+    phoneNumber?: string;
+    createdAt?: any; // Firestore Timestamp
+    updatedAt?: any; // Firestore Timestamp
 }
