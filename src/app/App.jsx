@@ -62,7 +62,7 @@ function AppRoutes() {
 export default function App() {
   return (
     <AppProvider>
-      <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <BrowserRouter>
         <SavedProvider>
           <HistoryProvider>
             <AppRoutes />
