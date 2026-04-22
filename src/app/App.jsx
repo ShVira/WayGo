@@ -64,11 +64,9 @@ function AppRoutes() {
 }
 
 export default function App() {
-  const basename = "/WayGo/";
-
   return (
     <AppProvider>
-      <BrowserRouter basename={basename}>
+      <BrowserRouter>
         <SavedProvider>
           <HistoryProvider>
             <AppRoutes />
