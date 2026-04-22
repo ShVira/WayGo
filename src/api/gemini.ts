@@ -1,6 +1,6 @@
 
 /**
- * Сервіс для взаємодії з Google Gemini API (REST)
+ * Сервіс для взаємодії з Google Gemini API (REST))
  */
 
 const ALLOWED_TAGS = ['ToGo', 'Explore', 'Cozy', 'Active', 'Social', 'Nature', 'Special', 'Depressive'];
