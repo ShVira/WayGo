@@ -11,12 +11,13 @@ import { useNavigate } from 'react-router-dom';
 import UserDao from '../../entities/user/api/UserDao';
 
 export default function Profile() {
-    const { user, setUser } = useContext(AppContext);
-    const { savedLocations, visitedLocations, setMessage } = useSaved();
+    const { user } = useContext(AppContext);
+    const { savedLocations, visitedLocations } = useSaved();
     const navigate = useNavigate();
     
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
+    const [nameError, setNameError] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<'saved' | 'visited'>('saved');
     
     const [editData, setEditData] = useState({

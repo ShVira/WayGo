@@ -23,13 +23,13 @@
     font-size: var(--fs-h1);
     font-weight: 850;
     font-style: italic;
-    color: #1a1a1a;
+    color: var(--text-primary);
     letter-spacing: -0.5px;
     margin-bottom: 8px;
 }
 
 .history-subtitle {
-    color: #8e8e93;
+    color: var(--text-muted);
     font-size: 15px;
     font-weight: 500;
 }
@@ -57,14 +57,14 @@
 .history-card {
     display: flex;
     align-items: center;
-    background: #ffffff;
+    background-color: var(--bg-card);
     border-radius: 20px;
     padding: 16px;
     gap: 16px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.03);
     cursor: pointer;
     transition: var(--transition-smooth);
-    border: 1px solid #f2f2f7;
+    border: 1px solid var(--border-color);
 }
 
 .history-card:hover {
@@ -101,13 +101,13 @@
     font-size: 17px;
     font-weight: 700;
     margin: 0;
-    color: #1c1c1e;
+    color: var(--text-primary);
     flex: 1;
 }
 
 .history-card-info p {
     font-size: 13px;
-    color: #8e8e93;
+    color: var(--text-muted);
     margin: 0;
     display: flex;
     align-items: center;
@@ -145,12 +145,12 @@
 .empty-history h3 {
     font-size: 20px;
     font-weight: 800;
-    color: #1a1a1a;
+    color: var(--text-primary);
     margin-bottom: 8px;
 }
 
 .empty-history p {
-    color: #8e8e93;
+    color: var(--text-muted);
     font-size: 15px;
     max-width: 220px;
     line-height: 1.4;

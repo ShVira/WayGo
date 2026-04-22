@@ -14,7 +14,7 @@
 }
 
 .location-modal {
-    background: white;
+    background-color: var(--bg-card);
     padding: 32px;
     border-radius: 32px;
     max-width: 400px;
@@ -46,11 +46,11 @@
     font-size: 24px;
     font-weight: 850;
     margin-bottom: 12px;
-    color: #1a1a1a;
+    color: var(--text-primary);
 }
 
 .location-modal p {
-    color: #8e8e93;
+    color: var(--text-muted);
     line-height: 1.6;
     margin-bottom: 32px;
 }
@@ -79,12 +79,12 @@
 .btn-deny {
     background: none;
     border: none;
-    color: #8e8e93;
+    color: var(--text-muted);
     padding: 12px;
     font-weight: 600;
     cursor: pointer;
 }
 
 .btn-deny:hover {
-    color: #1a1a1a;
+    color: var(--text-primary);
 }
