@@ -11,8 +11,8 @@ import { useNavigate } from 'react-router-dom';
 import UserDao from '../../entities/user/api/UserDao';
 
 export default function Profile() {
-    const { user } = useContext(AppContext);
-    const { savedLocations, visitedLocations } = useSaved();
+    const { user, setUser } = useContext(AppContext);
+    const { savedLocations, visitedLocations, setMessage } = useSaved();
     const navigate = useNavigate();
     
     const [isEditing, setIsEditing] = useState(false);
@@ -76,7 +76,7 @@ export default function Profile() {
                 email: user.email || "",
                 city: user.city || "",
                 dateOfBirth: user.dateOfBirth || "",
-                phoneNumber: user.phoneNumber || "+380",
+                phoneNumber: user.phoneNumber || "",
                 bio: user.bio || ""
             });
         }
@@ -96,6 +96,10 @@ export default function Profile() {
     };
 
     const handlePhoneChange = (val: string) => {
+        if (val === "") {
+            setEditData({ ...editData, phoneNumber: "" });
+            return;
+        }
         if (!val.startsWith('+')) {
             val = '+' + val.replace(/\+/g, '');
         }
