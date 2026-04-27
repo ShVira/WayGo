@@ -48,6 +48,9 @@ const isInsideUkraine = (lat: number, lon: number) => {
          lon >= UKRAINE_BOUNDS.west && lon <= UKRAINE_BOUNDS.east;
 };
 
+const MIN_RADIUS = 500;
+const MAX_RADIUS = 10000;
+
 const ChangeView = ({ center }: { center: [number, number] }) => {
   const map = useMap();
   const prevCenter = useRef<string>("");
@@ -358,8 +361,21 @@ const Home: React.FC = () => {
                   draggable={true}
                   eventHandlers={{ 
                     drag: (e) => {
-                      const dist = L.latLng(visualCenter[0], visualCenter[1]).distanceTo(e.target.getLatLng());
-                      setVisualRadius(Math.max(500, Math.min(10000, Math.round(dist))));
+                      const centerLatLng = L.latLng(visualCenter[0], visualCenter[1]);
+                      const mouseLatLng = e.target.getLatLng();
+                      const dist = centerLatLng.distanceTo(mouseLatLng);
+                      
+                      const clampedRadius = Math.max(MIN_RADIUS, Math.min(MAX_RADIUS, Math.round(dist)));
+                      setVisualRadius(clampedRadius);
+
+                      // Force handle to stay on the edge and horizontal during drag
+                      const lat = visualCenter[0];
+                      const lon = visualCenter[1];
+                      const metersPerDegreeLon = 111320 * Math.cos(lat * Math.PI / 180);
+                      const lonOffset = clampedRadius / metersPerDegreeLon;
+                      const constrainedPos = L.latLng(lat, lon + lonOffset);
+                      
+                      e.target.setLatLng(constrainedPos);
                     }, 
                     dragend: () => { setSearchRadius(visualRadius); setLocations([]); }
                   }}
