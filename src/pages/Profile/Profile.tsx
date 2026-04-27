@@ -18,6 +18,7 @@ export default function Profile() {
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [nameError, setNameError] = useState<string | null>(null);
+    const [usernameError, setUsernameError] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<'saved' | 'visited'>('saved');
     
     const [editData, setEditData] = useState({
@@ -31,7 +32,6 @@ export default function Profile() {
     });
 
     const [phoneError, setPhoneError] = useState<string | null>(null);
-    const [emailError, setEmailError] = useState<string | null>(null);
     const [citySuggestions, setCitySuggestions] = useState<string[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
 
@@ -100,10 +100,19 @@ export default function Profile() {
             setEditData({ ...editData, phoneNumber: "" });
             return;
         }
-        if (!val.startsWith('+')) {
-            val = '+' + val.replace(/\+/g, '');
+        
+        let cleaned = val.replace(/[^\d+]/g, '');
+        if (cleaned.includes('+')) {
+            cleaned = '+' + cleaned.replace(/\+/g, '');
         }
-        setEditData({ ...editData, phoneNumber: val });
+        
+        setEditData({ ...editData, phoneNumber: cleaned });
+    };
+
+    const handleUsernameChange = (val: string) => {
+        const filtered = val.replace(/[^a-zA-Z0-9_]/g, '');
+        setEditData({ ...editData, username: filtered });
+        if (usernameError) setUsernameError(null);
     };
 
     const selectCity = (city: string) => {
@@ -121,25 +130,36 @@ export default function Profile() {
 
     const validatePhone = (phone: string) => {
         if (!phone) return true;
-        const phoneRegex = /^\+?380\d{9}$/;
+        const phoneRegex = /^\+?[0-9]{10,14}$/;
         return phoneRegex.test(phone);
     };
 
     const handleSave = async () => {
         if (!auth.currentUser || !user) return;
         
-        // Validation
+        const nameRegex = /[a-zA-Zа-яА-ЯіІїЇєЄґҐ]/;
+        if (!nameRegex.test(editData.fullName)) {
+            setNameError("Ім'я має містити хоча б одну літеру");
+            return;
+        }
+        setNameError(null);
+
+        const usernameRegex = /^[a-zA-Z0-9_]+$/;
+        if (editData.username && !usernameRegex.test(editData.username)) {
+            setUsernameError("Тільки букви, цифри та підкреслення");
+            return;
+        }
+        setUsernameError(null);
+
         if (!validatePhone(editData.phoneNumber)) {
-            setPhoneError("Некоректний номер (+380...)");
+            setPhoneError("Некоректний номер (від 10 до 14 цифр)");
             return;
         }
         setPhoneError(null);
 
         setIsSaving(true);
         try {
-            // If email changed, we need to handle it carefully in Firebase Auth
             if (editData.email !== user.email) {
-                // This usually requires a recent login. We'll try, but it might fail.
                 try {
                     await updateEmail(auth.currentUser, editData.email);
                 } catch (e: any) {
@@ -152,17 +172,14 @@ export default function Profile() {
                 }
             }
 
-            // Update Firestore
             await UserDao.updateUser(user.uid, editData);
 
-            // Update Firebase Auth display name
             if (editData.fullName !== user.fullName) {
                 await updateProfile(auth.currentUser, {
                     displayName: editData.fullName
                 });
             }
 
-            // Update global state
             setUser({
                 ...user,
                 ...editData
@@ -227,6 +244,8 @@ export default function Profile() {
             });
         }
         setPhoneError(null);
+        setNameError(null);
+        setUsernameError(null);
         setIsEditing(false);
     };
 
@@ -237,21 +256,36 @@ export default function Profile() {
             <div className="profile-page profile-page--no-photo">
                 <div className="profile-details-column">
                     <header className="profile-header">
-                        <div className="title-section">
-                            <div className="title-row">
+                        <div className="title-section" style={{ minWidth: 0 }}>
+                            <div className="title-row" style={{ minWidth: 0 }}>
                                 {isEditing ? (
                                     <div className="edit-container">
                                         <input 
-                                            className="edit-input title-input" 
+                                            className={`edit-input title-input ${nameError ? 'input-error' : ''}`} 
                                             value={editData.fullName} 
                                             onChange={(e) => setEditData({...editData, fullName: e.target.value})} 
                                             placeholder="ПІБ"
                                             autoFocus
                                             disabled={isSaving}
+                                            maxLength={50}
                                         />
+                                        {nameError && <span className="field-error">{nameError}</span>}
                                     </div>
                                 ) : (
-                                    <h1 className="location-title">{user.fullName || "Користувач"}</h1>
+                                    <h1 
+                                        className="location-title" 
+                                        style={{ 
+                                            display: '-webkit-box',
+                                            WebkitLineClamp: 2,
+                                            WebkitBoxOrient: 'vertical',
+                                            overflow: 'hidden',
+                                            wordBreak: 'break-word',
+                                            fontSize: '24px',
+                                            maxWidth: '100%' 
+                                        }}
+                                    >
+                                        {user.fullName || "Користувач"}
+                                    </h1>
                                 )}
                                 
                                 <button 
@@ -263,7 +297,9 @@ export default function Profile() {
                                    {isEditing ? <X size={20} /> : <Pencil size={20} />}
                                 </button>
                             </div>
-                            <p className="location-distance">@{user.username || "username"}</p>
+                            <p className="location-distance" style={{ wordBreak: 'break-word', maxWidth: '100%' }}>
+                                @{user.username || "—"}
+                            </p>
                         </div>
                     </header>
 
@@ -341,7 +377,7 @@ export default function Profile() {
                                         onChange={(e) => setEditData({...editData, email: e.target.value})} 
                                     />
                                 ) : (
-                                    <span className="info-value">{user.email}</span>
+                                    <span className="info-value" style={{ wordBreak: 'break-word' }}>{user.email || "—"}</span>
                                 )}
                             </div>
                         </div>
@@ -351,13 +387,18 @@ export default function Profile() {
                             <div className="info-content">
                                 <span className="info-label">Username</span>
                                 {isEditing ? (
-                                    <input 
-                                        className="edit-input-small" 
-                                        value={editData.username} 
-                                        onChange={(e) => setEditData({...editData, username: e.target.value})} 
-                                    />
+                                    <>
+                                        <input 
+                                            className={`edit-input-small ${usernameError ? 'input-error' : ''}`} 
+                                            value={editData.username} 
+                                            onChange={(e) => handleUsernameChange(e.target.value)} 
+                                            maxLength={30}
+                                            placeholder="username"
+                                        />
+                                        {usernameError && <span className="field-error">{usernameError}</span>}
+                                    </>
                                 ) : (
-                                    <span className="info-value">@{user.username || "—"}</span>
+                                    <span className="info-value" style={{ wordBreak: 'break-word' }}>{user.username ? `@${user.username}` : "—"}</span>
                                 )}
                             </div>
                         </div>
@@ -375,7 +416,7 @@ export default function Profile() {
                                         lang="uk"
                                     />
                                 ) : (
-                                    <span className="info-value">{user.dateOfBirth || "—"}</span>
+                                    <span className="info-value" style={{ wordBreak: 'break-word' }}>{user.dateOfBirth || "—"}</span>
                                 )}
                             </div>
                         </div>
@@ -392,17 +433,19 @@ export default function Profile() {
                                             onChange={(e) => handleCityChange(e.target.value)} 
                                             onFocus={() => editData.city && setShowSuggestions(true)}
                                             onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                                            maxLength={50}
+                                            placeholder="Ваше місто"
                                         />
                                         {showSuggestions && citySuggestions.length > 0 && (
                                             <ul className="city-suggestions">
                                                 {citySuggestions.map(city => (
-                                                    <li key={city} onClick={() => selectCity(city)}>{city}</li>
+                                                    <li key={city} onMouseDown={() => selectCity(city)}>{city}</li>
                                                 ))}
                                             </ul>
                                         )}
                                     </div>
                                 ) : (
-                                    <span className="info-value">{user.city || "—"}</span>
+                                    <span className="info-value" style={{ wordBreak: 'break-word' }}>{user.city || "—"}</span>
                                 )}
                             </div>
                         </div>
@@ -414,15 +457,17 @@ export default function Profile() {
                                 {isEditing ? (
                                     <>
                                         <input 
+                                            type="tel"
                                             className={`edit-input-small ${phoneError ? 'input-error' : ''}`}
                                             value={editData.phoneNumber} 
                                             onChange={(e) => handlePhoneChange(e.target.value)} 
                                             placeholder="+380..."
+                                            maxLength={15}
                                         />
                                         {phoneError && <span className="field-error">{phoneError}</span>}
                                     </>
                                 ) : (
-                                    <span className="info-value">{user.phoneNumber || "—"}</span>
+                                    <span className="info-value" style={{ wordBreak: 'break-word' }}>{user.phoneNumber || "—"}</span>
                                 )}
                             </div>
                         </div>
@@ -436,9 +481,11 @@ export default function Profile() {
                                         className="edit-input-small edit-textarea" 
                                         value={editData.bio} 
                                         onChange={(e) => setEditData({...editData, bio: e.target.value})} 
+                                        maxLength={200}
+                                        placeholder="Розповісти про себе..."
                                     />
                                 ) : (
-                                    <span className="info-value">{user.bio || "Інформація відсутня"}</span>
+                                    <span className="info-value" style={{ wordBreak: 'break-word' }}>{user.bio || "—"}</span>
                                 )}
                             </div>
                         </div>
