@@ -21,6 +21,10 @@ export default function Profile() {
     const [usernameError, setUsernameError] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<'saved' | 'visited'>('saved');
     
+    // States for expanding lists
+    const [showAllSaved, setShowAllSaved] = useState(false);
+    const [showAllVisited, setShowAllVisited] = useState(false);
+    
     const [editData, setEditData] = useState({
         fullName: user?.fullName || "",
         username: user?.username || "",
@@ -47,26 +51,6 @@ export default function Profile() {
     const [passwordError, setPasswordError] = useState<string | null>(null);
     const [passwordSuccess, setPasswordSuccess] = useState(false);
     const [resetSent, setResetSent] = useState(false);
-
-    const likedVisited = visitedLocations.filter((l: any) => l.visitStatus === 'liked');
-    const dislikedVisited = visitedLocations.filter((l: any) => l.visitStatus === 'disliked');
-
-    const handleForgotPassword = async () => {
-        if (!user?.email) return;
-        setIsSaving(true);
-        setPasswordError(null);
-        try {
-            await sendPasswordResetEmail(auth, user.email);
-            setResetSent(true);
-            setMessage({ text: "Лист для відновлення надіслано", type: 'success' });
-            setTimeout(() => setResetSent(false), 5000);
-        } catch (error: any) {
-            console.error("Reset error:", error);
-            setPasswordError("Не вдалося відправити лист.");
-        } finally {
-            setIsSaving(false);
-        }
-    };
 
     useEffect(() => {
         if (user) {
@@ -281,7 +265,7 @@ export default function Profile() {
                                             overflow: 'hidden',
                                             wordBreak: 'break-word',
                                             fontSize: '24px',
-                                            maxWidth: '100%' 
+                                            flex: 1
                                         }}
                                     >
                                         {user.fullName || "Користувач"}
@@ -325,18 +309,25 @@ export default function Profile() {
                             <div className="tab-section">
                                 <h3 className="section-title">Збережені локації</h3>
                                 {savedLocations.length > 0 ? (
-                                    <div className="profile-list">
-                                        {savedLocations.map((loc: any) => (
-                                            <div key={loc.id} className="profile-card" onClick={() => navigate(`/location/${loc.id}`)}>
-                                                <img src={loc.image} alt={loc.name} />
-                                                <div className="card-info">
-                                                    <h4>{loc.name}</h4>
-                                                    <p>{loc.address}</p>
+                                    <>
+                                        <div className="profile-list">
+                                            {(showAllSaved ? savedLocations : savedLocations.slice(0, 3)).map((loc: any) => (
+                                                <div key={loc.id} className="profile-card" onClick={() => navigate(`/location/${loc.id}`)}>
+                                                    <img src={loc.image} alt={loc.name} />
+                                                    <div className="card-info">
+                                                        <h4>{loc.name}</h4>
+                                                        <p>{loc.address}</p>
+                                                    </div>
+                                                    <ChevronRight size={18} />
                                                 </div>
-                                                <ChevronRight size={18} />
-                                            </div>
-                                        ))}
-                                    </div>
+                                            ))}
+                                        </div>
+                                        {savedLocations.length > 3 && (
+                                            <button className="profile-show-all-btn" onClick={() => setShowAllSaved(!showAllSaved)}>
+                                                {showAllSaved ? "Сховати" : `Показати всі (${savedLocations.length})`}
+                                            </button>
+                                        )}
+                                    </>
                                 ) : <p className="empty-tab-text">У вас поки немає збережених локацій.</p>}
                             </div>
                         ) : (
@@ -345,18 +336,29 @@ export default function Profile() {
                                 {visitedLocations.length === 0 ? (
                                     <p className="empty-tab-text">Ви ще не відмітили жодного місця.</p>
                                 ) : (
-                                    <div className="profile-list">
-                                        {visitedLocations.map((loc: any) => (
-                                            <div key={loc.id} className="profile-card" onClick={() => navigate(`/location/${loc.id}`)}>
-                                                <img src={loc.image} alt={loc.name} />
-                                                <div className="card-info">
-                                                    <h4>{loc.name}</h4>
-                                                    <p>{loc.address}</p>
+                                    <>
+                                        <div className="profile-list">
+                                            {(showAllVisited ? visitedLocations : visitedLocations.slice(0, 3)).map((loc: any) => (
+                                                <div key={loc.id} className="profile-card" onClick={() => navigate(`/location/${loc.id}`)}>
+                                                    <img src={loc.image} alt={loc.name} />
+                                                    <div className="card-info">
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                            <h4 style={{ margin: 0 }}>{loc.name}</h4>
+                                                            {loc.visitStatus === 'liked' && <ThumbsUp size={14} className="reaction-icon reaction-icon--like" fill="currentColor" />}
+                                                            {loc.visitStatus === 'disliked' && <ThumbsDown size={14} className="reaction-icon reaction-icon--dislike" fill="currentColor" />}
+                                                        </div>
+                                                        <p>{loc.address}</p>
+                                                    </div>
+                                                    <ChevronRight size={18} />
                                                 </div>
-                                                <ChevronRight size={18} />
-                                            </div>
-                                        ))}
-                                    </div>
+                                            ))}
+                                        </div>
+                                        {visitedLocations.length > 3 && (
+                                            <button className="profile-show-all-btn" onClick={() => setShowAllVisited(!showAllVisited)}>
+                                                {showAllVisited ? "Сховати" : `Показати всі (${visitedLocations.length})`}
+                                            </button>
+                                        )}
+                                    </>
                                 )}
                             </div>
                         )}

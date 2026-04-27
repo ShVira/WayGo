@@ -533,7 +533,39 @@
     font-weight: 600;
 }
 
+.profile-show-all-btn {
+    align-self: center;
+    background: none;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    padding: 8px 20px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 4px;
+}
+
+.profile-show-all-btn:hover {
+    background-color: var(--primary-light);
+    transform: translateY(-1px);
+}
+
+.reaction-icon {
+    flex-shrink: 0;
+}
+
+.reaction-icon--like {
+    color: var(--primary);
+}
+
+.reaction-icon--dislike {
+    color: #ff3b30;
+}
+
 .section-divider {
+...
     height: 1px;
     background: #f2f2f7;
     width: 100%;
