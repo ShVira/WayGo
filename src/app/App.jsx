@@ -2,6 +2,7 @@ import React, { useContext, useEffect} from "react";
 import "./ui/App.css"; 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+
 import Home from "../pages/Home/Home";
 import LocationPage from "../pages/Location/Location";
 import { SavedProvider } from "./providers/SavedContext"; 
@@ -10,6 +11,7 @@ import { SavedPage } from "../pages/Like/Saved";
 import Profile from "../pages/Profile/Profile";
 import History from "../pages/History/History";
 import Auth from "../pages/Auth/Auth";
+
 
 // Import Error Pages
 import NotFoundPage from "../pages/Error/NotFound";
@@ -54,7 +56,7 @@ function AppRoutes() {
       <Route path="/history" element={<History />} />
       <Route path="/profile" element={user ? <Profile /> : <Auth />} />
       <Route path="/auth" element={user ? <Profile /> : <Auth />} />
-      <Route path="*" element={<div>Сторінку не  (404)</div>} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }
