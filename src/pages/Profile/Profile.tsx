@@ -281,7 +281,7 @@ export default function Profile() {
                                             overflow: 'hidden',
                                             wordBreak: 'break-word',
                                             fontSize: '24px',
-                                            maxWidth: '100%' 
+                                            flex: 1
                                         }}
                                     >
                                         {user.fullName || "Користувач"}
