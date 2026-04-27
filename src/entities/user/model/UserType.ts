@@ -7,6 +7,8 @@ export interface UserType {
     city: string;
     bio?: string;
     phoneNumber?: string;
+    hasCompletedOnboarding?: boolean;
+    preferredVibes?: string[];
     createdAt?: any; // Firestore Timestamp
     updatedAt?: any; // Firestore Timestamp
 }

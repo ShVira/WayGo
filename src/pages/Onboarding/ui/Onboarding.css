@@ -1,0 +1,209 @@
+.onboarding-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-main);
+    padding: 20px;
+}
+
+.onboarding-container {
+    max-width: 450px;
+    width: 100%;
+    text-align: center;
+    background: var(--bg-card);
+    padding: 40px 30px;
+    border-radius: 32px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md);
+    position: relative;
+}
+
+.onboarding-theme-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.onboarding-theme-toggle:hover {
+    background-color: var(--primary-light);
+}
+
+.dark .onboarding-theme-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.onboarding-progress {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 30px;
+}
+
+.progress-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.progress-dot.active {
+    width: 24px;
+    border-radius: 10px;
+    background: var(--primary);
+}
+
+.progress-dot.completed {
+    background: var(--primary);
+}
+
+.step-fade-in {
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.icon-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.main-icon { background: #e8f5e9; color: #4caf50; }
+.geo-icon { background: #e3f2fd; color: #2196f3; }
+
+.onboarding-content h1, .onboarding-content h2 {
+    font-size: 24px;
+    font-weight: 850;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+}
+
+.onboarding-content p {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.vibe-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 24px 0;
+}
+
+.vibe-card {
+    padding: 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-card); /* Changed from var(--bg-main) for better card look */
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-primary); /* Explicitly set text color */
+}
+
+.vibe-card:hover {
+    border-color: var(--primary);
+}
+
+.vibe-card.selected {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    color: var(--primary-dark); /* Ensure dark text on light green background */
+    transform: scale(1.02);
+}
+
+.vibe-emoji {
+    font-size: 24px;
+}
+
+.vibe-label {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.check-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: var(--primary);
+    color: white;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg-main);
+    padding: 16px;
+    border-radius: 16px;
+    margin-top: 24px;
+    text-align: left;
+    border: 1px solid var(--border-color);
+}
+
+.info-box span {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.onboarding-actions {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.btn-back {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.btn-skip {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+    margin-top: 8px;
+}
