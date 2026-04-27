@@ -23,9 +23,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
                 try {
                     const firestoreUser = await UserDao.getUser(firebaseUser.uid);
                     if (firestoreUser) {
-                        setUser(firestoreUser);
+                        setUser({ ...firestoreUser, uid: firebaseUser.uid });
                     } else {
-                        // Minimal fallback if Firestore document is not found (e.g., legacy users or right after registration)
+                        // Minimal fallback
                         setUser({
                             uid: firebaseUser.uid,
                             fullName: firebaseUser.displayName || 'Користувач',
@@ -34,7 +34,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
                             dateOfBirth: '',
                             city: '',
                             phoneNumber: '',
-                            bio: ''
+                            bio: '',
+                            hasCompletedOnboarding: false
                         } as UserType);
                     }
                 } catch (error) {

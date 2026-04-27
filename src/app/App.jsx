@@ -11,6 +11,7 @@ import { SavedPage } from "../pages/Like/Saved";
 import Profile from "../pages/Profile/Profile";
 import History from "../pages/History/History";
 import Auth from "../pages/Auth/Auth";
+import Onboarding from "../pages/Onboarding/Onboarding";
 
 
 // Import Error Pages
@@ -22,6 +23,9 @@ import { AppContext, AppProvider } from "../features/app-context/AppContext";
 
 function AppRoutes() {
   const { user, isBusy } = useContext(AppContext);
+  const [onboardingDone, setOnboardingDone] = React.useState(
+    localStorage.getItem('waygo_onboarding_completed') === 'true'
+  );
 
   useEffect(() => {
     const isDark = localStorage.getItem('theme') === 'dark';
@@ -30,6 +34,15 @@ function AppRoutes() {
     } else {
       document.documentElement.classList.remove('dark');
     }
+  }, []);
+
+  // Listen for storage changes (optional but good for multi-tab)
+  useEffect(() => {
+    const handleStorage = () => {
+      setOnboardingDone(localStorage.getItem('waygo_onboarding_completed') === 'true');
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
   }, []);
 
   if (isBusy) {
@@ -48,6 +61,19 @@ function AppRoutes() {
     );
   }
 
+  // Force onboarding if:
+  // 1. User is logged in but hasn't completed it in Firestore
+  // 2. No user is logged in AND they haven't seen it locally
+  const shouldShowOnboarding = (user && !user.hasCompletedOnboarding) || (!user && !onboardingDone);
+
+  if (shouldShowOnboarding) {
+    return (
+      <Routes>
+        <Route path="*" element={<Onboarding onComplete={() => setOnboardingDone(true)} />} />
+      </Routes>
+    );
+  }
+
   return (
     <Routes>
       <Route path="/" element={<Home />} />
@@ -56,6 +82,7 @@ function AppRoutes() {
       <Route path="/history" element={<History />} />
       <Route path="/profile" element={user ? <Profile /> : <Auth />} />
       <Route path="/auth" element={user ? <Profile /> : <Auth />} />
+      <Route path="/onboarding" element={<Onboarding />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

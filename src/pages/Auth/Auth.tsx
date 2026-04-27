@@ -1,15 +1,19 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import SiteButton from '../../features/SiteButton/SiteButton';
 import { Layout } from '../../features/layout/Layout';
 import { auth } from '../../app/api/firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail } from 'firebase/auth';
 import UserDao from '../../entities/user/api/UserDao';
 import { AppContext } from '../../features/app-context/AppContext';
+import { useSearchParams } from 'react-router-dom';
 import './ui/Auth.css';
 
 export default function Auth() {
     const { setUser } = useContext(AppContext);
-    const [view, setView] = useState<'login' | 'register' | 'forgot'>('login');
+    const [searchParams] = useSearchParams();
+    const [view, setView] = useState<'login' | 'register' | 'forgot'>(
+        searchParams.get('mode') === 'register' ? 'register' : 'login'
+    );
 
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
