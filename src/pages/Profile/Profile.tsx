@@ -215,6 +215,18 @@ export default function Profile() {
         }
     };
 
+    const handleForgotPassword = async () => {
+        if (!user?.email) return;
+        try {
+            await sendPasswordResetEmail(auth, user.email);
+            setResetSent(true);
+            setMessage({ text: "Посилання для скидання пароля надіслано на email", type: 'success' });
+        } catch (error: any) {
+            console.error("Reset password error:", error);
+            setMessage({ text: "Не вдалося надіслати email для скидання пароля", type: 'error' });
+        }
+    };
+
     const handleCancel = () => {
         if (user) {
             setEditData({
